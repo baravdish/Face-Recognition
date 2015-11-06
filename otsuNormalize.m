@@ -9,7 +9,7 @@ function [normalizedImg] = otsuNormalize(img)
     WbVec = zeros(nBins, 1);
     WfVec = zeros(nBins, 1);
     sumBVec = zeros(nBins, 1);
-
+    
     for k = 1:nBins
         WbVec(k) = sum(bins(1:k));
         sumBVec(k) = binIndexVec(1:k)'*bins(1:k);
