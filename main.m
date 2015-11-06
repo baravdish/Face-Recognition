@@ -53,7 +53,7 @@ for i = 1:nImages
     realImgCrop = img(minRow:maxRow, minCol:maxCol);
 
     width = maxRow - minRow;
-    height = maxCol - minRow;
+    height = maxCol - minCol;
     croppedImg = imcrop(imgBinar ,[minCol minRow width height]);
     
 %     TODO Eyemap:
