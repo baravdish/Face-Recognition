@@ -9,79 +9,39 @@ close all
 tic
 % load DB
 
-nImages = 6;
-path = 'DB1\db1_0';
+nImages = 4;
+path = 'DB0\db0_';
 fileformat = '.jpg';
 
 %% Main
-% for i = 1:1
 for i = 1:nImages
+% for i = 1:nImages
     
     img = imread(strcat(path, num2str(i), fileformat));
     
-    imgYCbCr = rgb2ycbcr(img);
-    imgHSV = rgb2hsv(img);
+%     figure
+%     imshow(img)
     
-    Y = imgYCbCr(:,:,1);a
+    imgNorm = lightNorm(img);
+    
+%     figure
+%     imshow(img);
+    
+    
+    imgYCbCr = rgb2ycbcr(img);
+%     imgHSV = rgb2hsv(img);
+    
+    Y = imgYCbCr(:,:,1);
     CB = imgYCbCr(:,:,2);
     CR = imgYCbCr(:,:,3);
     
-    H = imgHSV(:,:,1);
-    S = imgHSV(:,:,2);
-    V = imgHSV(:,:,3);
+%     H = imgHSV(:,:,1);
+%     S = imgHSV(:,:,2);
+%     V = imgHSV(:,:,3);
     
-    figure
-    fontSize = 12;
-    
-    subplot(4, 3, 1);
-	imshow(Y);
-	title('Y', 'FontSize', fontSize);
-	subplot(4, 3, 2);
-	imshow(CB);
-	title('CB', 'FontSize', fontSize);
-	subplot(4, 3, 3);
-	imshow(CR);
-	title('CR', 'FontSize', fontSize);
-    
-    subplot(4, 3, 4);
-	plot(imhist(Y));
-	title('hist Y', 'FontSize', fontSize);
-	subplot(4, 3, 5);
-	plot(imhist(CB));
-	title('hist CB', 'FontSize', fontSize);
-	subplot(4, 3, 6);
-	plot(imhist(CR));
-	title('hist CR', 'FontSize', fontSize);
-    
-    subplot(4, 3, 7);
-	imshow(H);
-	title('H', 'FontSize', fontSize);
-	subplot(4, 3, 8);
-	imshow(S);
-	title('S', 'FontSize', fontSize);
-	subplot(4, 3, 9);
-	imshow(V);
-	title('V', 'FontSize', fontSize);
-    
-    subplot(4, 3, 10);
-	plot(imhist(H));
-	title('hist H', 'FontSize', fontSize);
-	subplot(4, 3, 11);
-	plot(imhist(S));
-	title('hist S', 'FontSize', fontSize);
-	subplot(4, 3, 12);
-	plot(imhist(V));
-	title('hist V', 'FontSize', fontSize);
-    
-    faceMask = and(and(CB > 105, CB < 135), ...
-                   and(CR > 140, CR < 165));
-    
-%     faceMask = and(H > 6/360, H < 38/360);
-    
-%     faceMask = and(and(and(CB > 105, CB < 135), ...
-%                    and(CR > 140, CR < 165)), ...
-%                    and(H > 6/360, H < 39/360));    
-                
+    faceMask = and(and(CB > 105, CB < 135), ... 
+    and(CR > 140, CR < 165)); 
+
     for n = 1:6
         erodeKernel = strel('disk', n);
         dilateKernel = strel('disk', 1+n);
@@ -98,20 +58,53 @@ for i = 1:nImages
     dilateKernel = strel('disk', 10); 
     faceMask = imerode(faceMask, erodeKernel);
     faceMask = imdilate(faceMask, dilateKernel);
-
-%     figure
-%     title('faceMask' + int2str(i))
-%     imshow(faceMask);
     
     faceMask = repmat(faceMask, [1,1,3]);
     face = img.*uint8(faceMask);
+     
     
-    figure
-    title('face' + int2str(i))
-    imshow(face);
+
+    
+    [row, col] = find(face(:,:,1) ~= 0);
+    
+    minCol = min(col);
+    maxCol = max(col);
+
+    minRow = min(row);
+    maxRow = max(row);
+    cropImg = img(minRow:maxRow, minCol:maxCol, :);
+%     figure
+%     imshow(cropImg);
+    
+    faceYCbCr = rgb2ycbcr(cropImg);
+    
+    faceY = faceYCbCr(:,:,1);
+    faceCB = faceYCbCr(:,:,2);
+    faceCR = faceYCbCr(:,:,3);
+    cHat = 255 - faceCR;
+    
+    imshow(faceCR*faceCR')
+    no = faceCR.^2;
+    
+    max(no(:))
+    min(no(:))
+    
+%     imshow(faceCB./faceCR);
+%     eyeMapC = 1/3*(faceCB.^2 + cHat.^2 + faceCB./faceCR);
+    
+    
+%     figure
+%     title('face' + int2str(i))
+%     imshow(face);
    
     
 end
+
+
+
+%%
+
+
 
 %%
 %     threshCB = and(CB > 105, CB < 135);
