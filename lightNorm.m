@@ -42,9 +42,7 @@ g(binG) = 255;
 b = aB*img(:,:,3);
 binB = b > 255;
 
-
 b(binB) = 255;
-
 
 result = cat(3,r,g,b);
 

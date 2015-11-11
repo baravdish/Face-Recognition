@@ -9,26 +9,35 @@ close all
 tic
 % load DB
 
-nImages = 4;
-path = 'DB0\db0_';
+nImages = 9;
+path = 'DB2\bl_0';
 fileformat = '.jpg';
 
 %% Main
+% for i = 3:3
+close all
 for i = 1:nImages
-% for i = 1:nImages
     
     img = imread(strcat(path, num2str(i), fileformat));
-    
+%     imgGray = rgb2gray(img);
+%     imshow(imgGray);
+%     hold on
+%     h = fspecial('sobel');
+%     imgF = imfilter(img, h);
+%     figure
+%     imshow(I);
 %     figure
 %     imshow(img)
+%     title('img');
     
     imgNorm = lightNorm(img);
+%     imgNorm = whiteNorm(img);
     
 %     figure
-%     imshow(img);
+%     imshow(imgNorm);
+%     title('imgNorm')
     
-    
-    imgYCbCr = rgb2ycbcr(img);
+    imgYCbCr = rgb2ycbcr(imgNorm);
 %     imgHSV = rgb2hsv(img);
     
     Y = imgYCbCr(:,:,1);
@@ -39,8 +48,17 @@ for i = 1:nImages
 %     S = imgHSV(:,:,2);
 %     V = imgHSV(:,:,3);
     
-    faceMask = and(and(CB > 105, CB < 135), ... 
-    and(CR > 140, CR < 165)); 
+
+%     faceMask = and(and(CB > 105, CB < 135), ... 
+%     and(CR > 140, CR < 165)); 
+
+    faceMask = and(and(CB > 100, CB < 140), ... 
+                   and(CR > 135, CR < 170)); 
+
+
+    figure
+    imshow(faceMask);
+    title('faceMask');
 
     for n = 1:6
         erodeKernel = strel('disk', n);
@@ -48,7 +66,7 @@ for i = 1:nImages
         faceMask = imerode(faceMask, erodeKernel);
         faceMask = imdilate(faceMask, dilateKernel);
     end
-    
+   
     erodeKernel = strel('disk', 25);
     dilateKernel = strel('disk', 20);    
     faceMask = imdilate(faceMask, dilateKernel);
@@ -61,9 +79,10 @@ for i = 1:nImages
     
     faceMask = repmat(faceMask, [1,1,3]);
     face = img.*uint8(faceMask);
-     
     
-
+    figure
+    imshow(face);
+    title('face')
     
     [row, col] = find(face(:,:,1) ~= 0);
     
@@ -75,22 +94,43 @@ for i = 1:nImages
     cropImg = img(minRow:maxRow, minCol:maxCol, :);
 %     figure
 %     imshow(cropImg);
-    
+     
     faceYCbCr = rgb2ycbcr(cropImg);
-    
-    faceY = faceYCbCr(:,:,1);
-    faceCB = faceYCbCr(:,:,2);
-    faceCR = faceYCbCr(:,:,3);
+%     
+    faceY = double(faceYCbCr(:,:,1));
+    faceCB = double(faceYCbCr(:,:,2));
+    faceCR = double(faceYCbCr(:,:,3)); 
+
+    sqFaceCB = faceCB.^2;
+    sqFaceCR = faceCR.^2;
     cHat = 255 - faceCR;
+    sqCHat = cHat.^2;
+    divFace = faceCB./faceCR;
     
-    imshow(faceCR*faceCR')
-    no = faceCR.^2;
+    % Now it's normalized to [0,1]
+    % If we need [0,255], just multiply with 255.
+    normFaceCB = (sqFaceCB)/(max(sqFaceCB(:)));
+    normFaceCR = (sqFaceCR)/(max(sqFaceCR(:)));
     
-    max(no(:))
-    min(no(:))
+    normSqCHat = (sqCHat)/(max(sqCHat(:)));
+    normDivFace = (divFace)/(max(divFace(:)));
     
-%     imshow(faceCB./faceCR);
-%     eyeMapC = 1/3*(faceCB.^2 + cHat.^2 + faceCB./faceCR);
+    eyeMapC = 1/3*(normFaceCB + normSqCHat + normDivFace);
+    imshow(eyeMapCEnhanc);
+    hold on
+    eyeMapCEnhanc = imadjust(eyeMapC);
+    [centers, radii, metric] = imfindcircles(eyeMapCEnhanc,[1 20]);
+    centersStrong5 = centers(1:5,:);
+    radiiStrong5 = radii(1:5);
+    metricStrong5 = metric(1:5);
+    viscircles(centersStrong5, radiiStrong5,'EdgeColor','b');
+
+%     figure
+    diff = abs(normFaceCB - normDivFace);
+    mouthMap = and(diff, normFaceCR);
+%     figure
+%     imshow(mouthMap, []);
+%        
     
     
 %     figure
@@ -99,58 +139,6 @@ for i = 1:nImages
    
     
 end
-
-
-
-%%
-
-
-
-%%
-%     threshCB = and(CB > 105, CB < 135);
-%     threshCR = and(CR > 140, CR < 165);
-%     
-% %   10 erode och 25 dilate verkar vara lämpligt
-%     SEerode = strel('square', 10);
-%     SEdilate = strel('square', 25);
-%     
-%     erosionCR = imerode(threshCR, SEerode);
-%     closingCR= imdilate(erosionCR, SEdilate);
-%     
-%     figure(i)
-%     imshow(erosionCR);
-%     
-% %     Matlabs egna closing
-% %     closingCR = imclose(closingCR, SEdilate);
-%     
-%     closeCR3 = repmat(closingCR, [1,1,3]);
-%     
-%     imgBinar = img;
-%     
-%     imgBinar(~closeCR3) = 0;
-%     
-%     binar = imgBinar ~= 0;
-%     
-%     [row, col] = find(binar(:,:,2) ~= 0);
-%     
-%     minCol = min(col);
-%     maxCol = max(col);
-% 
-%     minRow = min(row);
-%     maxRow = max(row);
-%     realImgCrop = img(minRow:maxRow, minCol:maxCol);
-% 
-%     width = maxRow - minRow;
-%     height = maxCol - minCol;
-%     croppedImg = imcrop(imgBinar ,[minCol minRow width height]);
-    
-%     TODO Eyemap:
-    
-    
-
-%     figure(i)
-%     imshow(realImgCrop);
-
 
 %% Otsu's method
 for i = 1:nImages
