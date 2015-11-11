@@ -39,7 +39,7 @@ function testAllAccessImages(testCase)
   number_of_access_images = testCase.TestData.number_of_access_images;
 
   for k = 1 : number_of_access_images
-    id = tnm034(access_images(1, k));
+    id = tnm034(access_images{k});
     verifyEqual(testCase, id, k);
   end
 end
