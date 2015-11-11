@@ -23,13 +23,23 @@ function teardownOnce(testCase)  % do not change function name
 end
 
 function testReadAccessImages(testCase)
-  verifyEqual(testCase,testCase.TestData.number_of_access_images, 16)
+  verifyEqual(testCase, testCase.TestData.number_of_access_images, 16)
 end
 
 function testReadNoAccessImages(testCase)
-  verifyEqual(testCase,testCase.TestData.number_of_no_access_images, 4)
+  verifyEqual(testCase, testCase.TestData.number_of_no_access_images, 4)
 end
 
 function testReadHardImages(testCase)
-  verifyEqual(testCase,testCase.TestData.number_of_hard_images, 38)
+  verifyEqual(testCase, testCase.TestData.number_of_hard_images, 38)
+end
+
+function testAllAccessImages(testCase)
+  access_images = testCase.TestData.access_images;
+  number_of_access_images = testCase.TestData.number_of_access_images;
+
+  for k = 1 : number_of_access_images
+    id = tnm034(access_images(1, k));
+    verifyEqual(testCase, id, k);
+  end
 end
