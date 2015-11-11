@@ -19,7 +19,8 @@ function [images, number_of_images] = readAllFromDir(name, directory, extension)
   mat_name = strcat(name, '.mat');
 
   if exist(mat_name)
-    images = load(mat_name);
+    tmp = load(mat_name);
+    images = tmp.images;
   else
     for k = 1:number_of_images
       current_filename = file_names(k).name;
