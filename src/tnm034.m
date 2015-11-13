@@ -10,6 +10,7 @@
 function id = tnm034(im)
   balanced_image = whiteBalance(im);
   face_image = detectFace(balanced_image);
-  normalized_image = normalizeImage(face_image);
-  id = verify(normalized_image);
+  id = face_image;
+  %   normalized_image = normalizeImage(face_image);
+%   id = verify(normalized_image);
 end
