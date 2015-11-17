@@ -9,12 +9,15 @@ function binaryImage = meanColorize(rgbImage, mask, tolerance)
     end
     
     if nargin < 3 
-        tolerance = 27
+        tolerance = 27;
     end
 
     % Convert image from RGB colorspace to lab color space.
     cform = makecform('srgb2lab');
-    lab_Image = applycform(im2double(rgbImage) ,cform);
+%     lab_Image = applycform(im2double(rgbImage) ,cform);
+%     lab_Image = rgb2lab(rgbImage);
+%     lab_Image = rgb2hsv(rgbImage);
+    lab_Image = rgb2ycbcr(im2double(rgbImage));
 
     % Extract out the color bands from the original image
     % into 3 separate 2D arrays, one for each color component.
@@ -50,16 +53,21 @@ function binaryImage = meanColorize(rgbImage, mask, tolerance)
     maskedDeltaE = deltaE .* mask;
     % Get the mean delta E in the mask region
     % Note: deltaE(mask) is a 1D vector of ONLY the pixel values within the masked area.
-    meanMaskedDeltaE = mean(deltaE(mask));
+    meanMaskedDeltaE = mean(deltaE(mask))
     % Get the standard deviation of the delta E in the mask region
-    stDevMaskedDeltaE = std(deltaE(mask));
+    stDevMaskedDeltaE = std(deltaE(mask))
     
 %     tolerance = meanMaskedDeltaE + 3 * stDevMaskedDeltaE;
 %     tolerance = 27
     
-    binaryImage = deltaE <= tolerance;
+    binaryImage = (deltaE >= meanMaskedDeltaE - tolerance) & ...
+                  (deltaE <= meanMaskedDeltaE + tolerance);
+%     binaryImage = (deltaE >= meanMaskedDeltaE - 10) & ...
+%                   (deltaE <= meanMaskedDeltaE + 10);
+%     
     
-    matchingColors = bsxfun(@times, rgbImage, cast(binaryImage, class(rgbImage)));
+    
+%     matchingColors = bsxfun(@times, rgbImage, cast(binaryImage, class(rgbImage)));
     
 %     fontSize = 12;
 %     
