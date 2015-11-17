@@ -75,14 +75,14 @@
 
 function output = detectFace(input)
     
-%     figure
-%     title('input');
-%     imshow(input);
+    figure
+    imshow(input);
+    title('input');
 %     pause;
 %     size(input)
     
 %     input = create_padded_image(input, 0);
-    input = padarray(input,[16 16],0,'both');
+%     input = padarray(input,[16 16],0,'both');
     
 %     size(input)
 %     title('input');
@@ -97,23 +97,245 @@ function output = detectFace(input)
 % 
 %     faceMask = and(and(CB > 105, CB < 145), ... 
 %                    and(CR > 136, CR < 165));
-%                
-    faceMask = and(and(CB > 100, CB < 145), ... 
-                   and(CR > 136, CR < 165));
+               
 %     faceMask = and(and(CB > 100, CB < 145), ... 
-%                    and(CR > 125, CR < 165));
-        figure
+%                    and(CR > 136, CR < 165));
+
+%   ycbcr
+% https://web.stanford.edu/class/ee368/Project_03/Project/reports/ee368group15.pdf
+%     faceMask = and(and(CB > 100, CB < 145), ... 
+%                    and(CR > 132, CR < 165));    
+    faceMask = and(and(CB > 100, CB < 145), ... 
+                   and(CR > 132, CR < 165));
+          
+    originalFaceMask = faceMask;
+    
+    foregroundMask = detractBackground(input);
+    
+    faceMask = and(faceMask, foregroundMask);
+       
+    imshow(faceMask); title('faceMask'); pause;
+%     faceMask = ExtractNLargestBlobs(faceMask, 1);
+%     imshow(faceMask); title('faceMask'); pause;
+%     faceMask = meanColorize(input, faceMask, 12);
+%     figure; imshow(faceMask); title('meanColorize faceMask'); pause;
+
+%      faceMask = imdilate(faceMask, strel('disk',10));
+%       faceMask = imfill(faceMask, 'holes');
+%       faceMask = imerode(faceMask, strel('disk',10));
+%    figure;  imshow(faceMask); title('faceMask'); pause;
+%     faceMask = imdilate(faceMask, strel('disk',2));
+%     faceMask = imfill(faceMask, 'holes');
+%     faceMask = imerode(faceMask, strel('disk',20));
+%     faceMask = imdilate(faceMask, strel('disk',20));
+%     imshow(faceMask); title('faceMask'); pause;
+               
+%     rgb
+%     I = input;
+%     if(size(I, 3) > 1)
+%         final_image = zeros(size(I,1), size(I,2));
+%         for i = 1:size(I,1)
+%             for j = 1:size(I,2)
+%                 R = I(i,j,1);
+%                 G = I(i,j,2);
+%                 B = I(i,j,3);
+%                 if(R > 95 && G > 40 && B > 20)
+%                     v = [R,G,B];
+%                     if((max(v) - min(v)) > 15)
+%                         if(abs(R-G) > 15 && R > G && R > B)
+%                             %it is a skin
+%                             final_image(i,j) = 1;
+%                         end
+%                     end
+%                 end
+%             end
+%         end
+%     end 
+%     figure; imshow(final_image); title('RGB final_image'); pause;
+%     faceMask = and(final_image, faceMask);
+%     figure; imshow(faceMask); title('and  final_image, faceMask'); pause;
+%     
+%         faceMask = ExtractNLargestBlobs(faceMask, 1);
+%     figure; imshow(faceMask); title('largest blob'); pause;
+%     
+%     faceMask = imdilate(faceMask, strel('disk',10));
+%     figure; imshow(faceMask); title('imdilate blob'); pause;
+%     faceMask = imfill(faceMask, 'holes');
+%     figure; imshow(faceMask); title('imfill blob'); pause;
+%     faceMask = imerode(faceMask, strel('disk',20));
+%     figure; imshow(faceMask); title('imerode blob'); pause;
+%     faceMask = ExtractNLargestBlobs(faceMask, 1);
+%     figure; imshow(faceMask); title('ExtractNLargestBlobs blob'); pause;
+%     faceMask = imdilate(faceMask, strel('disk',25));
+%     figure; imshow(faceMask); title('imdilate blob'); pause;
+%     
+%     figure; imshow(faceMask); title('and  final_image, faceMask'); pause;
+%     bw = imerode(faceMask, strel('disk', 1));
+%     figure; imshow(bw); title('erode and  final_image, faceMask'); pause;
+%     bw = bwareaopen(faceMask, 50);
+%     figure; imshow(bw); title('open and  final_image, faceMask'); pause;
+%     faceMask = meanColorize(input, bw, 10);
+%     figure; imshow(faceMask); title('mean again'); pause;
+% I=input;
+% I=double(I);
+% [hue,s,v] = rgb2hsv(I);
+% 
+% cb =  0.148* I(:,:,1) - 0.291* I(:,:,2) + 0.439 * I(:,:,3) + 128;
+% cr =  0.439 * I(:,:,1) - 0.368 * I(:,:,2) -0.071 * I(:,:,3) + 128;
+% [w h]=size(I(:,:,1));
+% 
+% for i=1:w
+%     for j=1:h            
+%         if  140<=cr(i,j) && cr(i,j)<=165 && 140<=cb(i,j) && cb(i,j)<=195 && 0.01<=hue(i,j) && hue(i,j)<=0.1     
+%             segment(i,j)=1;            
+%         else       
+%             segment(i,j)=0;    
+%         end    
+%     end
+% end
+% 
+% im(:,:,1)=I(:,:,1).*segment;   
+% im(:,:,2)=I(:,:,2).*segment; 
+% im(:,:,3)=I(:,:,3).*segment; 
+% segment = imdilate(segment, strel('disk', 2));
+% segment = imfill(segment, 'holes');
+% figure,imshow(segment);
+% pause;
+% faceMask = segment;
+
+
+
+
+%     img_orig=input;
+%    img=img_orig; %copy of original image
+%    hsv=rgb2hsv(img);
+%    h=hsv(:,:,1);
+%    s=hsv(:,:,2);
+%   
+%    [r c v]=find(h>0.25 | s<=0.15 | s>0.9); %non skin
+%    numid=size(r,1);
+%   
+%    for i=1:numid
+%        img(r(i),c(i),:)=0;
+%    end
+%   
+%    figure
+%    imshow(img);
+%   
+%   
+%    ycbcr segmentation
+%    img_ycbcr=img;  %image from the previous segmentation
+%    ycbcr=rgb2ycbcr(img_ycbcr);
+%    cb=ycbcr(:,:,2);
+%    cr=ycbcr(:,:,3);
+%   
+%    
+%     Detect Skin
+%     [r,c,v] = find(cb>=77 & cb<=127 & cr>=133 & cr<=173);
+%     [r c v] = find(cb<=77 | cb >=127 | cr<=133 | cr>=173);
+%     numid = size(r,1);
+%    
+%     Mark Skin Pixels
+%     for i=1:numid
+%         img_ycbcr(r(i),c(i),:) = 0;
+%        bin(r(i),c(i)) = 1;
+%     end
+%    
+%     figure
+%     imshow(img_ycbcr);
+%     title('ycbcr segmentation');
+%     pause;
+%   rgb segmentation
+% 
+% img_rgb=img_ycbcr;
+% r=img_rgb(:,:,1);
+% g=img_rgb(:,:,2);
+% b=img_rgb(:,:,3);
+% 
+% 
+% [row col v]= find(b>0.79*g-67 & b<0.78*g+42 & b>0.836*g-14 & b<0.836*g+44 ); %non skin pixels
+% numid=size(row,1);
+% 
+% for i=1:numid
+%     img_rgb(row(i),col(i),:)=0;
+% end
+% 
+% figure;
+% imshow(img_ycbcr);
+% title('img_ycbcr');
+% figure;
+% imshow(img_rgb);
+% title('img_rgb');
+% pause;
+
+
+    lapImg = imfilter(imadjust(rgb2gray(input)), fspecial('laplacian'));
+
+    imshow(lapImg); title('lapImg'); pause;
+
+    figure
+    level = graythresh(input);
+    bw = im2bw(input, level);
+    bw = bwareaopen(bw, 50);
+    bw = ~bw;
+    bw = imfill(bw, 'holes');
+    imshow(bw)
+    pause
+    
+    foreground = bw;
+    background = ~bw;
+    
+    nPixels = size(lapImg, 1) * size(lapImg, 2);
+%     max(lapImg(:))
+%     min(lapImg(:))
+    rega = lapImg.*uint8(bw);
+    inva = lapImg.*uint8(~bw);
+%     max(rega(:))
+%     min(inva(:))
+    rega = sum(rega(:)) / length(nonzeros(rega(:)))
+    inva = sum(inva(:)) / length(nonzeros(inva(:)))
+    
+    homogeneousBackground = 0;
+    
+    lowa = rega;
+    homo = inva
+    
+    if inva > rega
+       foreground = ~bw; 
+       background = bw;
+       homo = rega
+       lowa = inva;
+    end
+    
+    if homo < 8 && lowa / homo  > 3
+        homogeneousBackground = 1;
+    end
+    
+    foreground = imdilate(foreground, strel('disk', 10));
+    foreground = imfill(foreground, 'holes');
+    foreground = imerode(foreground, strel('disk', 10));
+    
+    figure
+    imshow(foreground);
+    title('foreground');
+    pause;
+    
+  
+    
+    
+               
+    figure
     title('faceMask');
     imshow(faceMask);
 %     pause;
     faceMask = imfill(faceMask, 'holes');
     
 %     title('faceMask');
-%     imshow(faceMask);
+%     imshow(facsk);
 %     pause;
     faceMask = ExtractNLargestBlobs(faceMask, 1);
 %     
-%     faceMaskRep = repmat(faceMask, [1,1,3]);
+%     faceMaskRep = reeMapmat(faceMask, [1,1,3]);
 %     input2 = input.*uint8(faceMaskRep);
     
 %     input = lightNorm(input);
@@ -148,6 +370,10 @@ function output = detectFace(input)
     dilateKernel = strel('disk', 20);    
     faceMask = imdilate(faceMask, dilateKernel);
     faceMask = imerode(faceMask, erodeKernel);
+    
+    if homogeneousBackground == 1
+          faceMask = and(foreground, faceMask);
+    end
     
 %     title('faceMask');
 %     imshow(faceMask);
@@ -186,20 +412,32 @@ function output = detectFace(input)
 
     faceMask = ExtractNLargestBlobs(faceMask, 1);
     
-%     figure
-%     title('faceMask');
-%     imshow(faceMask);
-%     pause;
+    figure
+    imshow(faceMask);
+    title('cropped faceMask');
+    pause;
 %     
-%     figure;
-%     title('faceMask');
-%     imshow(faceMask);
+    figure; imshow(faceMask); title('faceMask');  pause;
     
+    newMask = meanColorize(input, faceMask);
+    originalNewMask = newMask;
+    newMask = and(newMask, faceMask);
+    
+    figure; imshow(newMask); title('newMask'); pause;
+    newMask = ExtractNLargestBlobs(newMask, 1);
+    newMask = imdilate(newMask, strel('disk', 4));
+    newMask = imfill(newMask, 'holes');
+    
+    newMask = imerode(newMask, strel('disk', 7));
+    figure; imshow(newMask); title('newMask morphed'); pause;
+    faceMask = and(faceMask, newMask);
+    figure; imshow(faceMask); title('faceMask');  pause;
+    finalFaceMask = faceMask;
     faceMask = repmat(faceMask, [1,1,3]);
     face = input.*uint8(faceMask);
     
     
-        figure;
+    figure;
     title('face');
     imshow(face);
 
@@ -352,6 +590,8 @@ function output = detectFace(input)
 %     title('filtered');
 %     pause;
 
+
+
 % filtered = imfilter(faceHSV, fspecial('sobel'));
 h = faceHSV(:,:,1);
 s = faceHSV(:,:,2);
@@ -462,13 +702,18 @@ v = faceHSV(:,:,3);
 %     
 %     eyeMapCEnhanc = eyeMapCEnhanc > 0.9 * max(eyeMapC(:));
     
-%     figure;
-%     imshow(eyeMapCEnhanc);
-%     title('eyeMapCEnhanc');
-    
+    figure;
+    imshow(face);
+    title('face');
+    pause;
 
     
-    i=face;
+    i=input;
+    iMask = face > 0;
+    iMask = or(or( iMask(:,:,1), iMask(:,:,2)), iMask(:,:,3));
+    iMaskRep = repmat(iMask, [1,1,3]);
+%     face = input.*uint8(iMask);
+    figure;
     subplot(4,4,1)
     imshow(i)
     title('original image');
@@ -503,10 +748,13 @@ v = faceHSV(:,:,3);
 
     eyemapchr=l+m+n;
     subplot(4,4,7)
+%     figure;
     imshow(eyemapchr)
     title('Chrom Eyemap');
     J=histeq(eyemapchr);
     subplot(4,4,8)
+    eyemapchr = J;
+%     figure
     imshow(J)
     title('Equalized image');
 %     figure
@@ -519,68 +767,174 @@ v = faceHSV(:,:,3);
     o=imdilate(igray,SE);
     p=1+imerode(igray,SE);
     eyemaplum=o./p;
-    eyemaplum = imadjust(eyemaplum);
-    eyemapchr = imadjust(eyemapchr);
+    
+%     size(eyemaplum)
+%     size(iMask)
+%     size(iMaskRep)
+    
+%     figure
+%     eyeMap = and(eyemapchr, eyemaplum);
+%     imshow(eyeMap); title('eyeMap'); pause;
+    
+%     eyemaplum = eyemaplum.*uint8(iMask);
+%     eyemapchr = eyemapchr.*iMask;
+%     eyemaplum = imadjust(eyemaplum);
+%     eyemapchr = imadjust(eyemapchr);
     subplot(4,4,9)
+%     figure
     imshow(eyemaplum)
     title('Lum Eyemap');
-
-%     figure
-%     imshow(eyemapchr); title('eyemapchr Eyemap'); pause;
-%     imshow(eyemapchr); title('eyemaplum Eyemap'); pause;
+    pause;
     
-    eyemapchr = eyemapchr > 0.9;
-    eyemaplum = eyemaplum > 0.95;
+    
+    figure
+    imshow(eyemapchr); title('eyemapchr Eyemap'); pause;
+    imshow(eyemaplum); title('eyemaplum Eyemap'); pause;
+    
+    
+    
+    
+    
+%     figure;
+%     img = eyemaplum;
+%     overSaturated = rgb2gray(img);
+%     %     imshow(overSaturated); title('Over saturation'); pause;
+%     %     imshow(imadjust(overSaturated)); title('imadjust(overSaturated)'); pause;
+% %     imshow(imfilter(imadjust(overSaturated), fspecial('laplacian'))); title('filter imadjust(overSaturated)'); pause;
+%     overSaturated = imfilter(overSaturated, fspecial('laplacian'));
+%     %     imshow(overSaturated); title('filter Over saturation'); pause;
+%     overSaturated = imdilate(overSaturated, strel('disk', 2));
+% %     imshow(overSaturated); title('dilate Over saturation'); pause;
+%     overSaturated = ~overSaturated;
+%     imshow(overSaturated); title('filter Over saturation'); pause;
+    
+%     imshow(img); title('before Over saturation'); pause;
+%     overSaturated = ~overSaturated;
+%     overSaturatedRep = repmat(overSaturated, [1,1,3]);
+%     img = img.*uint8(overSaturatedRep);
+%     imshow(img); title('after Over saturation'); pause;
+    
+%     originalImg = img;
+
+%     subplot(1,4, 1);
+%     imshow(originalImg);
+%     subplot(1,4, 2);
+%     bar(pixelCounts);
+%     subplot(1,4, 3);
+%     plot(cdf);
+%     subplot(1,4, 4);
+%     thresholdIndex = find(cdf < 0.96, 1, 'last');
+%     thresholdValue = grayLevels(thresholdIndex);
+%     thresholdedImage = originalImg;
+%     thresholdedImage(originalImg(:) < thresholdValue) = 0;
+%     imshow(thresholdedImage);
+%     set(gcf, 'Position', get(0, 'ScreenSize')); % Maximize figure.
+%     pause;
+    
+%     figure; imshow(eyemapchr); title('eyemapchr'); pause;
+%     [pixelCounts grayLevels] = imhist(eyemapchr);
+%     cdf = cumsum(pixelCounts) / sum(pixelCounts);
+%     
+%     figure; imshow(eyemaplum); title('eyemaplum'); pause;
+%     [pixelCounts grayLevels] = imhist(eyemaplum);
+%     cdf = cumsum(pixelCounts) / sum(pixelCounts);
+%     eyemaplumIndex = find(cdf < 0.99, 1, 'last');
+%     eyemaplumTh = grayLevels(eyemaplumIndex) / 255;
+    
+    vea = eyemapchr.*finalFaceMask;
+    imshow(vea); title('vea'); pause;
+    vec = nonzeros(vea(:));
+    soretedVec = sort(vec, 'descend');
+    eyemapchrTh = 0.95 * soretedVec(1,1)
+%     soretedVec = sort(vec, 'ascend');
+%     len = length(soretedVec);
+%     index = 0.95 * len;
+%     eyemapchrTh = soretedVec(floor(index));
+    
+    eyemapchr22 = imgradient(rgb2gray(input)) / 255;
+    imshow(eyemapchr22);
+    title('imgradient');
+    pause;
+
+
+    figure; imshow(eyemapchr); title('eyemapchr before'); pause;
+%     eyemapchr2 = medfilt2(eyemapchr);
+%     eyemapchr2 = medfilt2(eyemapchr2);
+%     eyemapchr2 = medfilt2(eyemapchr2);
+%     eyemapchr = eyemapchr + eyemapchr2;
+    %     eyemapchr = eyemapchr.*eyemapchr;
+%     eyemapchr = imadjust(eyemapchr);
+%     eyemapchr = imdilate(eyemapchr, strel('disk',5));
+%     eyemapchr = imfilter(eyemapchr, fspecial('gaussian', 25));
+%     level = graythresh(eyemapchr);
+%     eyemapchr = im2bw(eyemapchr, 2*level);
+%     eyemapchr = bradley(eyemapchr, [125 125], 10);
+%     eyemapchr = imfilter(eyemapchr, fspecial('gaussian'));
+%     eyemapchr = imfilter(eyemapchr, fspecial('gaussian'));
+    figure; imshow(eyemapchr); title('eyemapchr after'); pause;
+    eyemapchr = eyemapchr > eyemapchrTh;
+%     eyemapchr = and(eyemapchr, ~originalNewMask);
+    figure; imshow(eyemapchr); title('eyemapchr'); pause;
+    
+    
+%     size(eyemaplum)
+%     size(eyemaplum)
+    vea = eyemaplum.*uint8(finalFaceMask);
+    imshow(vea); title('vea'); pause;
+    vec = nonzeros(vea(:));
+    soretedVec = sort(vec, 'descend');
+    eyemaplumTh = 0.9 * (soretedVec(1,1) / 255)
+%     soretedVec = sort(vec, 'ascend');
+%     len = length(soretedVec);
+%     index = 0.9 * len;
+%     eyemaplumTh = soretedVec(floor(index));
+    
+    eyemaplum = eyemaplum > eyemaplumTh;
+    figure; imshow(eyemaplum); title('eyemaplum'); pause;
+% nPixels = length(rVec);
+% percentage = 0.001;
+% nFind = round(nPixels*percentage);
+% meanValues = [mean(sortedImg((1:nFind),1)), ...
+%               mean(sortedImg((1:nFind),2)), ...
+%               mean(sortedImg((1:nFind),3))];
+          
 %     figure
 %         imshow(eyemapchr); title('eyemapchr Eyemap'); pause;
 %     imshow(eyemapchr); title('eyemaplum Eyemap'); pause;
     
     eyemapchr = and(eyemapchr, faceMask);
+  
+    
     eyemaplum = and(eyemaplum, faceMask);
     
     
-    cr2 = (cr).^2;
-    n = length(cr2(:));
-    ovan = (1 / n) * sum(cr2(:));
-    cddcb = cr./cb;
-    nedan = (1 / n) * sum(cddcb(:));
-    
-    figure
-    nn = 0.95 * (ovan / nedan)
-    mouthMap = cr2.*(cr2 - nn*cddcb).^2;
-    mouthMap = imadjust(mouthMap);
-%     imshow(mouthMap); title('mouthMap'); pause;
-    mouthMap = mouthMap > 0.95;
-    mouthMap = imfilter(mouthMap, fspecial('sobel'));
-    mouthMap = ExtractNLargestBlobs(mouthMap, 1);
-     
-%     mouthMap = imerode(mouthMap, strel('disk', 1));
-    mouthMap = imdilate(mouthMap, strel('disk', 8));
-%     imshow(mouthMap); title('mouthMap'); pause;
-%     dilateKernel = strel('disk', 4);
-%     erodeKernel = strel('disk', 4);
-%     mouthMap = imerode(mouthMap, erodeKernel);
-%     imshow(mouthMap); title('mouthMap'); pause;
-%     mouthMap = imdilate(mouthMap, dilateKernel);
-%     imshow(mouthMap); title('mouthMap'); pause;
-%     dilateKernel = strel('disk', 5);
-%     mouthMap = imdilate(mouthMap, dilateKernel);
-%     imshow(mouthMap); title('mouthMap'); pause;
-%     mouthMap = imfill(mouthMap, 'holes');
-%     imshow(mouthMap); title('mouthMap'); pause;
-%     mouthMap = ExtractNLargestBlobs(mouthMap, 1);
-%     imshow(mouthMap); title('mouthMap'); pause;
-        
-    eyeMap = and(eyemapchr, eyemaplum) - mouthMap;
-%     figure
-    
 
-    mouthMap = repmat(mouthMap, [1,1,3]);
-    mouthMap = face.*uint8(mouthMap);
-    
+    imshow(eyemapchr); title('eyemapchr true'); pause;
+    imshow(eyemaplum); title('eyemaplum true'); pause;
+    eyeMap = and(eyemapchr, eyemaplum);
+    imshow(eyeMap); title('eyeMap'); pause;
+%     figure
+%     figure; imshow(eyeMap); title('eyeMap1'); pause;
+%     figure; imshow(finalFaceMask); title('finalFaceMask'); pause;
     figure;
-    imshow(mouthMap);
-    title('mouthMap');
+    overSaturated = rgb2gray(face);
+%     imshow(overSaturated); title('Over saturation'); pause;
+%     imshow(imadjust(overSaturated)); title('imadjust(overSaturated)'); pause;
+    imshow(imfilter(imadjust(overSaturated), fspecial('laplacian'))); title('filter imadjust(overSaturated)'); pause;
+    overSaturated = imfilter(overSaturated, fspecial('laplacian'));
+%     imshow(overSaturated); title('filter Over saturation'); pause;
+    overSaturated = imdilate(overSaturated, strel('disk', 2));
+    imshow(overSaturated); title('dilate Over saturation'); pause;
+    overSaturated = ~overSaturated;
+    imshow(overSaturated); title('filter Over saturation'); pause;
+    
+    overSaturated = and(finalFaceMask, overSaturated);
+    imshow(overSaturated); title('Over saturation'); pause;
+    
+    imshow(eyeMap); title('eyeMap11'); pause;
+    eyeMap = eyeMap - and(overSaturated,eyeMap);
+    
+    imshow(eyeMap); title('eyeMap2'); pause;
     
     dilateKernel = strel('disk', 14);
 
@@ -604,35 +958,52 @@ v = faceHSV(:,:,3);
     eyeMap = imfill(eyeMap, 'holes');
 %     imshow(eyeMap); title('eyemap'); pause;
 %     eyeMap = imerode(eyeMap, strel('disk', 2));
+    eyeMap = imdilate(eyeMap, strel('disk', 4));
+%     eyeMap2 = ExtractNLargestBlobs(eyeMap, 2);
+%     eyeMap2 = imdilate(eyeMap2, strel('disk', 2));
+%     eyeMap = or(eyeMap, eyeMap);
     eyeMap = ExtractNLargestBlobs(eyeMap, 2);
+
 %     imshow(eyeMap); title('eyemap'); pause;
 %     eyeMap = imdilate(eyeMap, strel('disk', 2));
 %     imshow(eyeMap); title('eyemap'); pause;
 %     eyeMap = imdilate(eyeMap, strel('disk', 10));
 %     eyeMap = imerode(eyeMap, strel('disk', 10));
-    eyeMap = imdilate(eyeMap, strel('disk', 4));
-%     imshow(eyeMap); title('final Eyemap'); pause;
+    
+    imshow(eyeMap); title('final Eyemap'); pause;
     erodeKernel = strel('disk', 11);
-%     imshow(eyeMap); title('final Eyemap'); pause;
-    eyeMap = imerode(eyeMap, strel('disk', 4));
-%     imshow(eyeMap); title('final Eyemap'); pause;
-    eyeMap = imdilate(eyeMap, dilateKernel);
-%     imshow(eyeMap); title('final Eyemap'); pause;
+    imshow(eyeMap); title('final Eyemap'); pause;
+    eyeMap = imerode(eyeMap, strel('disk', 3));
+    imshow(eyeMap); title('final Eyemap'); pause;
+    eyeMap = imdilate(eyeMap, strel('disk', 14));
+    imshow(eyeMap); title('final Eyemap'); pause;
     eyeMap = imfill(eyeMap, 'holes');
-%     imshow(eyeMap); title('final Eyemap'); pause;
+    imshow(eyeMap); title('final Eyemap'); pause;
 
     eyeMap = ExtractNLargestBlobs(eyeMap, 2);
 %     imshow(eyeMap); title('final Eyemap'); pause;
-    finalMask = eyeMap;
+    finalEyeMask = eyeMap;
     eyeMap = repmat(eyeMap, [1,1,3]);
     eyeMap = face.*uint8(eyeMap);
     imshow(eyeMap); title('final Eyemap'); 
 
-    I=im2bw(eyeMap);  % convert to gray scale
+%     I=im2bw(eyeMap);  % convert to gray scale
+    level = graythresh(eyeMap);
+    I = im2bw(eyeMap, level);
+    imshow(I); title('I Eyemap'); pause;
+%     I=rgb2gray(eyeMap);  % convert to gray scale
+%     imshow(I); title('I Eyemap'); pause;
+%     I=imadjust(rgb2gray(eyeMap));  % convert to gray scale
+%     imshow(I); title('I Eyemap'); pause;
     Rmin=4; Rmax=40;  % circle radius range
     [centersDark, radiiDark, metric] = imfindcircles(I, [Rmin Rmax], ...
-                 'ObjectPolarity','dark','sensitivity',0.99)
-             
+                 'ObjectPolarity','dark','sensitivity',0.99);
+     
+    figure
+    imshow(eyeMap); title('final Eyemap'); pause;
+%     viscircles(centersBright, radiiBright,'EdgeColor','b');
+    viscircles(centersDark, radiiDark,'LineStyle','--');
+    pause
 %     centersStrong5 = centersDark(1:2, :)
 %     radiiStrong5 = radiiDark(1:2)
 %     metricStrong5 = metric(1:2);
@@ -645,25 +1016,30 @@ v = faceHSV(:,:,3);
     imageSizeY = eyeMapSize(1,2,1)
     [cols rows ] = meshgrid(1:imageSizeY, 1:imageSizeX);
 %     irisMask = final;
-    centerX = centersDark(1,1,1)
-    centerY = centersDark(1,2,1)
-    radius = radiiDark(1,1)
-    irisMask = ((rows - centerY).^2 + (cols - centerX).^2) <= radius.^2;
+    centerX1 = centersDark(1,1,1)
+    centerY1 = centersDark(1,2,1)
+    radius1 = radiiDark(1,1)
+    irisMask = ((rows - centerY1).^2 + (cols - centerX1).^2) <= radius1.^2;
     
+    centerX2 = centersDark(2,1,1)
+    centerY2 = centersDark(2,2,1)
+    radius2 = radiiDark(2,1)
     
-%     irisMask2 = imdilate(irisMask, strel('r', [5, 2]));
-%     irisMapRep = repmat(irisMask2, [1,1,3]);
-%     I2 = face;
-%     I2(irisMapRep) = 1;
-%     imshow(I2); title('I2 Eyemap'); pause;
-%     
-%     [centersDark, radiiDark, metric] = imfindcircles(I, [Rmin Rmax], ...
-%              'ObjectPolarity','dark','sensitivity',0.99)
+    for n=2 : size(centersDark, 1)
+        centerX2 = centersDark(n,1,1)
+        centerY2 = centersDark(n,2,1)  
+        radius2 = radiiDark(n,1)
+        
+        distance = sqrt((centerX2-centerX1)^2 + (centerY2-centerY1)^2);
+        
+        if distance > (radius1 + radius2)*2
+            n = size(centersDark, 1)
+            break
+        end
+    end
          
-    centerX = centersDark(2,1,1)
-    centerY = centersDark(2,2,1)
-    radius = radiiDark(2,1)
-    irisMask = irisMask | ((rows - centerY).^2 + (cols - centerX).^2) <= radius.^2;
+
+    irisMask = irisMask | ((rows - centerY2).^2 + (cols - centerX2).^2) <= radius2.^2;
     size(irisMask)
     
     irisMap = repmat(irisMask, [1,1,3]);
@@ -679,16 +1055,122 @@ v = faceHSV(:,:,3);
    
     eyeColor = rgb2hsv(eyeColor/255);
 
+%     figure
+%     imshow(face);
+%     title('original');
+%     pause;
+    referenceDirection = [1 0];
+    eyeDirection = [centerX1-centerX2, centerY1-centerY2];
+    eyeDirection = eyeDirection / norm(eyeDirection);
+    angle = acos(dot(referenceDirection, eyeDirection)) * 180 / pi
+    angle = min(angle, 180-angle);
+    
 
-%     sizes = size(centersDark)
-   
-%     centersDark = find(faceMaskCopy(round(centersDark(1: sizes(1,1), 1), ...
-%            faceMaskCopy(round(centersDark(1: sizes(1,1), 2),1)) ~= 0))
-%     viscircles(centersDark, radiiDark,'LineStyle','--');hold off
-
-
-
+    figure
+    imshow(face);
+    title('face before rotated');
+    pause;
+    face = imrotate(face, -angle);
+    eyeMap = imrotate(eyeMap, -angle);
+    irisMap = imrotate(irisMap, -angle);
+    cropImg = imrotate(cropImg, -angle);
+    faceCropped = imrotate(faceCropped, -angle);
+    finalFaceMask = imrotate(finalFaceMask, -angle);
+    finalEyeMask = imrotate(finalEyeMask, -angle);
+    overSaturated = imrotate(overSaturated, -angle);
+    figure
+    imshow(face);
+    title('face after rotated');
+    pause;
+    
+    input = imrotate(input, -angle);
+    iycbcr=rgb2ycbcr(input);
+    iycbcr = im2double(iycbcr);
+    y=iycbcr(:,:,1);
+    cb=iycbcr(:,:,2);
+    cr=iycbcr(:,:,3);
+    
         
+    
+    cr2 = (cr).^2;
+    n = length(cr2(:));
+    ovan = (1 / n) * sum(cr2(:));
+    cddcb = cr./cb;
+    nedan = (1 / n) * sum(cddcb(:));
+    
+    figure
+    nn = 0.95 * (ovan / nedan)
+    mouthMap = cr2.*(cr2 - nn*cddcb).^2;
+    
+%     mouthMap = mouthMap.*
+    mouthMap = imadjust(mouthMap);
+%       mouthMap =  histeq(mouthMap);
+%     size(mouthMap)
+%     size(finalFaceMask)
+%     finalFaceMaskRep = repmat(finalFaceMask, [1,1,3]);
+    vea = mouthMap;
+    imshow(vea); title('vea'); pause;
+    vec = nonzeros(vea(:));
+    soretedVec = sort(vec, 'descend');
+%     maxa = max(mouthMap(nonzeros(finalFaceMask)))
+    mouthTh = 0.99 * soretedVec(1,1)
+    pause;
+    imshow(mouthMap); title('mouthMap'); pause;
+    mouthMap = mouthMap > mouthTh;
+%     mouthMap = mouthMap - and(mouthMap, finalEyeMask);
+%     mouthMap = mouthMap - and(mouthMap, overSaturated);
+%     mouthMap = mouthMap - and(mouthMap, finalFaceMask);
+    imshow(mouthMap); title('mouthMap'); pause;
+%    mouthMap = edge(mouthMap,'sobel','horizontal');
+%     imshow(mouthMap); title('mouthMap'); pause;
+    mouthMap = or(imfilter(mouthMap, [-1 0 1]'), imfilter(mouthMap, [1 0 -1]'));
+%     mouthMap = or(mouthMap, imfilter(mouthMap, fspecial('sobel')));
+%       mouthMap = edge(mouthMap, 'Roberts');
+%       mouthMap = edge(mouthMap, 'Canny');
+%       'Canny'
+        
+    mouthMap = uint8(mouthMap).*uint8(finalFaceMask);
+    mouthMap = uint8(mouthMap) - uint8(mouthMap).*uint8(finalEyeMask);
+    mouthMap = uint8(mouthMap) - uint8(mouthMap).*uint8(overSaturated);
+%     mouthMap = mouthMap - and(mouthMap, finalEyeMask);
+%     mouthMap = mouthMap - and(mouthMap, overSaturated);
+%     imshow(mouthMap); title('mouthMap'); pause;
+%     mouthMap = or(imfilter(mouthMap, [-1 0 1]'), ...
+%                   imfilter(mouthMap, fspecial('sobel')));
+    imshow(mouthMap); title('mouthMap'); pause;
+    
+%     imshow(mouthMap); title('mouthMap'); pause;
+    
+%     mouthMap = imdilate(mouthMap, strel('disk', 1));
+%     mouthMap2 = ExtractNLargestBlobs(mouthMap, 1);
+%     mouthMap2 = imdilate(mouthMap2, strel('disk', 4));
+%     mouthMap = or(mouthMap, mouthMap2);
+    mouthMap = ExtractNLargestBlobs(mouthMap, 1);
+    imshow(mouthMap); title('mouthMap'); pause;
+%     mouthMap = imerode(mouthMap, strel('disk', 1));
+    mouthMap = imdilate(mouthMap, strel('disk', 8));
+    mouthMap = imfill(mouthMap, 'holes');
+%     imshow(mouthMap); title('mouthMap'); pause;
+%     dilateKernel = strel('disk', 4);
+%     erodeKernel = strel('disk', 4);
+%     mouthMap = imerode(mouthMap, erodeKernel);
+%     imshow(mouthMap); title('mouthMap'); pause;
+%     mouthMap = imdilate(mouthMap, dilateKernel);
+%     imshow(mouthMap); title('mouthMap'); pause;
+%     dilateKernel = strel('disk', 5);
+%     mouthMap = imdilate(mouthMap, dilateKernel);
+%     imshow(mouthMap); title('mouthMap'); pause;
+%     mouthMap = imfill(mouthMap, 'holes');
+%     imshow(mouthMap); title('mouthMap'); pause;
+%     mouthMap = ExtractNLargestBlobs(mouthMap, 1);
+%     imshow(mouthMap); title('mouthMap'); pause;
+
+    mouthMap = repmat(mouthMap, [1,1,3]);
+    mouthMap = face.*uint8(mouthMap);
+    
+    figure;
+    imshow(mouthMap);
+    title('mouthMap');
     
     
     eyesMouth = or(eyeMap(:,:,1), mouthMap(:,:,1));
@@ -720,13 +1202,27 @@ v = faceHSV(:,:,3);
 %     I = rgb2gray(imread('face22.jpg'));
 %     I = rgb2gray(faceCropped);
     I = rgb2gray(cropImg);
+%     I = imadjust(I);
     sizeI = size(I);
     maxSize = max(sizeI);
 %     I = imcrop(I,[1 1 maxSize maxSize]);
-      
-%     I = edge(I, 'sobel');
-%      I = imfilter(I, fspecial('disk'));
-    I = imfilter(I, fspecial('laplacian'));
+I = imfilter(I, fspecial('laplacian'));
+
+%      I = imfilter(I, fspecial('disk', 10));     
+%     I = imfilter(I, fspecial('laplacian'));
+%     I = imerode(I, strel('disk', 1));
+%     I = ExtractNLargestBlobs(I,2);
+%     I = imdilate(I, strel('disk', 5));
+%     
+%     IREP = repmat(I>0, [1,1,3]);
+%     Ie = cropImg.*uint8(IREP);
+%     
+%      figure
+%     imshow(Ie); 
+%     colormap gray; 
+%     title('COOL EYE image'); 
+    
+    
 %  I = imfilter(I, fspecial('average'));
 %  I = imfilter(I, fspecial('sobel'));
 % I = imfilter(I, fspecial('log'));
@@ -740,7 +1236,7 @@ v = faceHSV(:,:,3);
     imagesc(I); 
     colormap gray; 
     title('Original image'); 
-
+    
 %     imgSize=size(I); %#img is your image matrix
 %     finalSize=500;   
 %     padImg=zeros(finalSize);
@@ -805,6 +1301,11 @@ v = faceHSV(:,:,3);
 %     output = [F1D floor(F1DS-5) dominantHsv(1) dominantHsv(2) dominantHsv(3) eyeColor(1) eyeColor(2) eyeColor(3)];
 
     F1DS = sqrt(ux(1,1)^2 + uy(1,1)^2)*length(dydx);
-    output = [dydx floor(F1DS-5) dominantHsv(1) dominantHsv(2) dominantHsv(3) eyeColor(1) eyeColor(2) eyeColor(3)];
+%     COOOOOOOOOOOOOOOOL = size(dydx)
+% langd = length(dydx);  
+langd = floor(F1DS-5);
+val = dydx;
+% val = F1D;
+output = [val langd dominantHsv(1) dominantHsv(2) dominantHsv(3) eyeColor(1) eyeColor(2) eyeColor(3)];
 
 end
