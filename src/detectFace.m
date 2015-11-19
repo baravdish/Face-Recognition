@@ -6,6 +6,8 @@
 
 function output = detectFace(input)
   
+    
+
     imgYCbCr = rgb2ycbcr(input);
     
     Y = imgYCbCr(:,:,1);
@@ -32,9 +34,12 @@ function output = detectFace(input)
     faceMask = imerode(faceMask, erodeKernel);
     faceMask = imdilate(faceMask, dilateKernel);
     
+    figure
+    imshow(faceMask)
     faceMask = repmat(faceMask, [1,1,3]);
     face = input.*uint8(faceMask);
-    
+        imshow(face)
+    % Crop face
     [row, col] = find(face(:,:,1) ~= 0);
     
     minCol = min(col);
@@ -43,36 +48,8 @@ function output = detectFace(input)
     minRow = min(row);
     maxRow = max(row);
     cropImg = input(minRow:maxRow, minCol:maxCol, :);
-
-    % EyeMap & MouthMap
-    faceYCbCr = rgb2ycbcr(cropImg);
-     
-    faceY = double(faceYCbCr(:,:,1));
-    faceCB = double(faceYCbCr(:,:,2));
-    faceCR = double(faceYCbCr(:,:,3)); 
-
-    sqFaceCB = faceCB.^2;
-    sqFaceCR = faceCR.^2;
-    cHat = 255 - faceCR;
-    sqCHat = cHat.^2;
-    divFace = faceCB./faceCR;
     
-    % Now it's normalized to [0,1]
-    % If we need [0,255], just multiply with 255.
-    normFaceCB = (sqFaceCB)/(max(sqFaceCB(:)));
-    normFaceCR = (sqFaceCR)/(max(sqFaceCR(:)));
-    
-    normSqCHat = (sqCHat)/(max(sqCHat(:)));
-    normDivFace = (divFace)/(max(divFace(:)));
-    
-    eyeMapC = 1/3*(normFaceCB + normSqCHat + normDivFace);
-    eyeMapCEnhanc = imadjust(eyeMapC);
-    
-    diff = abs(normFaceCB - normDivFace);
-    mouthMap = and(diff, normFaceCR);
-    
-    figure
-    imshow(eyeMapCEnhanc);
-    output = cropImg;
+   
+    output = face;
 
 end
