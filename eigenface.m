@@ -4,8 +4,7 @@ close all
 
 addpath src
 
-[access_images, number_of_access_images] = readAllFromDir('access', 'img/access/', '*.jpg');
-number_of_access_images = 10;
+[access_images, number_of_access_images] = readAllFromDir('access', 'img/cut/', '*.png');
 
 %A = [200 000, antal inlästa bilder]
 A = zeros(500*400, number_of_access_images);
@@ -20,8 +19,8 @@ end
 %normalisera average_face
 average_face = average_face / number_of_access_images;
 
-colormap gray
-imagesc(reshape(average_face, [500, 400]));
+%colormap gray
+%imagesc(reshape(average_face, [500, 400]));
 
 for k = 1 : number_of_access_images
   phi = image_vector(:,k) - average_face;
@@ -55,14 +54,21 @@ for l = 1 : number_of_access_images
 end
 
 % Verify
-image_to_check = imread('img/test.jpg');
+image_to_check = imread('img/cut_test/4.png');
 image_to_check_gray = rgb2gray(image_to_check);
+figure
+colormap gray
+imagesc(image_to_check_gray);
 image_to_check_resized = imresize(image_to_check_gray, [500 400]);
 image_to_check_vector = double(reshape(image_to_check_resized, [500*400 1])) / 255;
 unknown_omega = zeros(number_of_access_images, 1);
 
+figure
+colormap gray
 for k = 1 : number_of_access_images
   unknown_omega(k) = eigenfaces(:, k)' * (image_to_check_vector - mean(image_to_check_vector));
+  subplot(4,4,k)
+  imagesc(reshape(image_vector(:, k), [500, 400]));
 end
 
 
@@ -72,4 +78,4 @@ for k = 1 : number_of_access_images
 end
 
 %printar ut distansen, lågt värde = ansiktet tillhör databasen
-distances / max(distances)
+distances
