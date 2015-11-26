@@ -8,6 +8,7 @@ function setupOnce(testCase)  % do not change function name
   [access_images, number_of_access_images] = readAllFromDir('access', 'img/access/', '*.jpg');
   [no_access_images, number_of_no_access_images] = readAllFromDir('no_access', 'img/no_access/', '*.jpg');
   [hard_images, number_of_hard_images] = readAllFromDir('hard', 'img/hard/', '*.jpg');
+  [all_images, number_of_all_images] = readAllFromDir('all', 'img/all/', '*.jpg');
 
   testCase.TestData.access_images = access_images;
   testCase.TestData.number_of_access_images = number_of_access_images;
@@ -15,7 +16,8 @@ function setupOnce(testCase)  % do not change function name
   testCase.TestData.number_of_no_access_images = number_of_no_access_images;
   testCase.TestData.hard_images = hard_images;
   testCase.TestData.number_of_hard_images = number_of_hard_images;
-
+  testCase.TestData.all_images = all_images;
+  testCase.TestData.number_of_all_images = number_of_all_images;
 end
 
 function teardownOnce(testCase)  % do not change function name
@@ -37,10 +39,12 @@ end
 function testAllAccessImages(testCase)
 access_images = testCase.TestData.access_images;
 number_of_access_images = testCase.TestData.number_of_access_images;
-% access_images = testCase.TestData.hard_images;
-% number_of_access_images = testCase.TestData.number_of_hard_images;
+access_images = testCase.TestData.hard_images;
+number_of_access_images = testCase.TestData.number_of_hard_images;
 % access_images = testCase.TestData.no_access_images;
 % number_of_access_images = testCase.TestData.number_of_no_access_images;
+access_images = testCase.TestData.all_images;
+number_of_access_images = testCase.TestData.number_of_all_images;
 
   for k = 1 : number_of_access_images
     id = tnm034(access_images{k});
