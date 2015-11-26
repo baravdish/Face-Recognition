@@ -8,10 +8,16 @@ addpath src
 [no_access_images, er_of_no_access_images] = readAllFromDir('no_access', 'img/no_access/', '*.jpg');
 [hard_images, number_of_hard_images] = readAllFromDir('hard', 'img/hard/', '*.jpg');
 
-result = tnm034(hard_images{2});
-result = tnm034(no_access_images{4});
+result = tnm034(hard_images{17});
+result = tnm034(hard_images{35});
+
+result = tnm034(no_access_images{2});
+result = tnm034(hard_images{28});
 result = tnm034(no_access_images{1});
-result = tnm034(hard_images{34});
+% result = tnm034(hard_images{2});
+result = tnm034(no_access_images{4});
+% result = tnm034(no_access_images{1});
+% result = tnm034(hard_images{34});
 result = tnm034(hard_images{4});
 % result = tnm034(no_access_images{1});
 % result = tnm034(hard_images{27});
@@ -25,7 +31,7 @@ result = tnm034(hard_images{4});
 % result = tnm034(no_access_images{2});
 
 
-
+        
 % result = tnm034(no_access_images{4});
 
 result = tnm034(hard_images{28});

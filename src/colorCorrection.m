@@ -32,7 +32,6 @@ function [output] = colorCorrection(img)
                 mean(sortedImg((end-nFindBlack:end),2)), ...
                 mean(sortedImg((end-nFindBlack:end),3))];
 
-    darkMean = darkMean;
     [rows, columns] = size(R);
     R = R - (ceil(darkMean(1,1))*uint8(ones(rows, columns)));
     G = G - (ceil(darkMean(1,2))*uint8(ones(rows, columns)));
