@@ -53,9 +53,9 @@ function binaryImage = meanColorize(rgbImage, mask, tolerance)
     maskedDeltaE = deltaE .* mask;
     % Get the mean delta E in the mask region
     % Note: deltaE(mask) is a 1D vector of ONLY the pixel values within the masked area.
-    meanMaskedDeltaE = mean(deltaE(mask))
+    meanMaskedDeltaE = mean(deltaE(mask));
     % Get the standard deviation of the delta E in the mask region
-    stDevMaskedDeltaE = std(deltaE(mask))
+    stDevMaskedDeltaE = std(deltaE(mask));
     
 %     tolerance = meanMaskedDeltaE + 3 * stDevMaskedDeltaE;
 %     tolerance = 27

@@ -37,8 +37,8 @@ end
 function testAllAccessImages(testCase)
 access_images = testCase.TestData.access_images;
 number_of_access_images = testCase.TestData.number_of_access_images;
-access_images = testCase.TestData.hard_images;
-number_of_access_images = testCase.TestData.number_of_hard_images;
+% access_images = testCase.TestData.hard_images;
+% number_of_access_images = testCase.TestData.number_of_hard_images;
 % access_images = testCase.TestData.no_access_images;
 % number_of_access_images = testCase.TestData.number_of_no_access_images;
 
