@@ -648,8 +648,8 @@ function output = detectFace(rgbImage)
     
     eyeMouthDistance = mouthY - eyeY;
     
-    offsetX = eyeDistance * 0.3;
-    offsetY = eyeMouthDistance * 0.2;
+    offsetX = eyeDistance * 0.5;
+    offsetY = eyeMouthDistance * 0.4;
     
     output = rgbImage(round(eyeY-offsetY) : round(mouthY+offsetY), ...
                       round(leftEyeCenterX-offsetX) :  round(rightEyeCenterX+offsetX), :);
