@@ -8,7 +8,7 @@ addpath src
 [no_access_images, er_of_no_access_images] = readAllFromDir('no_access', 'img/no_access/', '*.jpg');
 [hard_images, number_of_hard_images] = readAllFromDir('hard', 'img/hard/', '*.jpg');
 
-result = tnm034(hard_images{24});
+result = tnm034(hard_images{38});
 pause;
 
 result = tnm034(access_images{8});

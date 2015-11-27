@@ -1,5 +1,5 @@
 function output = detectFace(rgbImage)
-    figure; imshow(rgbImage); title('rgbImage');    
+%     figure; imshow(rgbImage); title('rgbImage');    
     
     rgbImage = padarray(rgbImage,[2 2],'both');
     
@@ -297,15 +297,15 @@ function output = detectFace(rgbImage)
     
 %     eyeMapLuma = imadjust(eyeMapLuma);
     
-    grayFace = im2double(imadjust(rgb2gray(face)));
-    filtered = im2double(zeros(size(grayFace)));
-    for k = 1:10
-        h = (ones(k, k) - fspecial('gaussian', k, 0.1))./k^2;
-        filtered = filtered + im2double(imfilter(grayFace, h)) / k;
-        filtered = imadjust(filtered);
-    end
-    filtered = im2double(ones(size(filtered))) - filtered;
-    filtered = filtered.*faceMask;
+%     grayFace = im2double(imadjust(rgb2gray(face)));
+%     filtered = im2double(zeros(size(grayFace)));
+%     for k = 1:10
+%         h = (ones(k, k) - fspecial('gaussian', k, 0.1))./k^2;
+%         filtered = filtered + im2double(imfilter(grayFace, h)) / k;
+%         filtered = imadjust(filtered);
+%     end
+%     filtered = im2double(ones(size(filtered))) - filtered;
+%     filtered = filtered.*faceMask;
 %     eyeMapLuma = imdilate(eyeMapLuma, strel('disk', 1));
     
     eyeMapChroma = histeq(eyeMapChroma);
@@ -440,7 +440,7 @@ function output = detectFace(rgbImage)
     I = rgbImage.*uint8(eyeMapRep);
 %     I = rgbImage;
 % figure; imshow(originalEyeMap); title('originalEyeMap'); pause;
-    IGradient = imgradient(originalEyeMap);
+ 
     IGradient = originalEyeMap;
 %      figure; imshow(IGradient, []); title('IGradient'); pause;
 %     IGradient = imfilter(IGradient, fspecial('log'));
@@ -472,7 +472,7 @@ function output = detectFace(rgbImage)
 %     figure; imshow(I); title('I dark'); pause;
     
     IBright = IGradient;
-    IDark = IGradient;
+ 
     
 %      figure; imshow(IBright, []); title('IBright'); pause;
 
@@ -557,127 +557,38 @@ function output = detectFace(rgbImage)
     eyeY = (leftEyeCenterY + rightEyeCenterY) / 2;
 
     eyeRegionMask = zeros(size(face(:,:,1)));
-%     mask(eyeY-measureDistance : eyeY+measureDistance, :) = 1;
     eyeRegionMask(1: eyeY+measureDistance, :) = 1;
-%     figure; imshow(eyeRegionMask); title('eyeRegionMask'); pause;
-    
-    
-%     n = length(nonzeros(faceMask));
-%     
-%     Cb = double(Cb_orig);
-%     Cr = double(Cr_orig);
-%     
-%     CrSquared = Cr.^2;
-%     numerator = (1 / n) * sum(CrSquared(:));
-%     
-%     CrDividedByCb = Cr./Cb;
-%     denumerator = (1 / n) * sum(CrDividedByCb(:));
-%     
-%     nn = 0.95 * (numerator / denumerator);
-%     
-%     mouthMap = CrSquared.*(CrSquared - nn*CrDividedByCb).^2;
-    
-%     figure; imshow(mouthMap, []); title('mouthMap'); pause;
-    
-%     mouthMap = im2double(mouthMap);
-%     mouthMap = 255 * ((mouthMap - min(mouthMap(:))) ...
-%                  ./ (max(mouthMap(:)) - min(mouthMap(:))));
-%     mouthMap = uint8(mouthMap);
-%     
-%     originalMouthMap = mouthMap;
-    
-%     figure; imshow(mouthMap, []); title('mouthMap'); pause;
-   
 
-
-%     figure; imshow(mouthMap, []); title('mouthMap'); pause;
     mouthMap = mouthMap .* uint8(faceMask);
-%     figure; imshow(nonSkinMask3, []); title('nonSkinMask3'); pause;
-%     figure; imshow(estimatedSkinMask, []); title('estimatedSkinMask'); pause;
-%     estimatedSkinMask2 = ExtractNLargestBlobs(estimatedSkinMask, 1);
-%     figure; imshow(estimatedSkinMask2, []); title('estimatedSkinMask2'); pause;
-%     estimatedSkinMask2 = imerode(estimatedSkinMask2, strel('disk', 3));
-% %     estimatedSkinMask2 = imdilate(estimatedSkinMask2, strel('disk', 3));
-%     figure; imshow(estimatedSkinMask2, []); title('estimatedSkinMask2'); pause;
-%     estimatedSkinMask2 = imfill(estimatedSkinMask2, 'holes');
-%     figure; imshow(estimatedSkinMask2, []); title('estimatedSkinMask2'); pause;
-%     estimatedSkinMask2 = imerode(estimatedSkinMask2, strel('disk', 2));
-%     mouthMap = mouthMap .* uint8(estimatedSkinMask2);
-%     figure; imshow(mouthMap, []); title('mouthMap'); pause;
-    
-%     figure; imshow(face, []); title('face'); pause;
-%     figure; imshow(mouthMap, []); title('mouthMap'); pause;
-%     mouthMap
 
     mouthMap = mouthMap > 0.5 * max(mouthMap(~eyeRegionMask));
 
-%     meana = mean2(mouthMap(faceMask));
-%     maxa = max(mouthMap(:));
-%     mouthMap = mouthMap > meana + 0.15*(maxa - meana);
-
-%     mouthMap = im2bw(mouthMap, graythresh(mouthMap));
-    
-%     figure; imshow(mouthMap, []); title('mouthMap'); pause;
     mouthMap = imdilate(mouthMap, strel('disk', 4));
     mouthMap = imfill(mouthMap, 'holes');
     mouthMap = imerode(mouthMap, strel('disk', 4));
-%     figure; imshow(mouthMap, []); title('mouthMap'); pause;
-%     mouthMap = rgb2gray(face) .* uint8(mouthMap);
-%     mouthMap = originalMouthMap .* uint8(mouthMap);
-%     mouthMapRep = repmat(mouthMap, [1,1,3]);
-%     mouthMap = face.*uint8(mouthMapRep);
-    
-%     figure; imshow(mouthMap, []); title('mouthMap'); pause;
-%     mouthMap = or(imfilter(mouthMap, [-1 0 1]'), imfilter(mouthMap, [1 0 -1]'));
-%     figure; imshow(mouthMap, []); title('mouthMap'); pause;
-%     mouthMap = imdilate(mouthMap, strel('disk', 2));
-%     mouthMap = imerode(mouthMap, strel('disk', 2));
-%     figure; imshow(mouthMap); title('mouthMap'); pause;
-%     mouthMap = imfill(mouthMap, 'holes');
-%     figure; imshow(mouthMap); title('mouthMap'); pause;   
-    
 
 
 
     
 
     BW = and(mouthMap, ~eyeRegionMask);
-%     BW = mouthMap > 0.8;
-%     figure; imshow(BW); title('BW'); pause;
     
     BW = ExtractNLargestBlobs(BW, 1);
-%     figure; imshow(BW); title('Binary Image'); pause;
     s = regionprops(BW, mouthMap, {'Centroid','WeightedCentroid', 'Area'});
-    
-%     figure;
-%     imshow(mouthMap)
-%     title('Weighted (red) and Unweighted (blue) Centroids');
-%     hold on
-%     numObj = numel(s);
-%     for k = 1 : numObj
-%         plot(s(k).WeightedCentroid(1), s(k).WeightedCentroid(2), 'r*');
-%         plot(s(k).Centroid(1), s(k).Centroid(2), 'bo');
-%     end
-%     hold off
-%     pause;
+
     mouthX = s(1).Centroid(1);
     mouthY = s(1).Centroid(2);
 
-    eyeMouthDistance = mouthY - eyeY;
     
-    offsetX = eyeDistance * 0.3;
-    offsetY = eyeMouthDistance * 0.2;
     
-    output = rgbImage(round(eyeY-offsetY) : round(mouthY+offsetY), ...
-                      round(leftEyeCenterX-offsetX) :  round(rightEyeCenterX+offsetX), :);
-    figure; imshow(output); title('output');
+    
     
     
     
 %     figure; imshow(face); title('face before rotated'); 
-    viscircles([leftEyeCenterX, leftEyeCenterY], leftRadius,'EdgeColor','r');
-    viscircles([rightEyeCenterX, rightEyeCenterY], rightRadius,'EdgeColor', 'g');
-    viscircles([mouthX, mouthY], rightRadius,'EdgeColor', 'b');
+%     viscircles([leftEyeCenterX, leftEyeCenterY], leftRadius,'EdgeColor','r');
+%     viscircles([rightEyeCenterX, rightEyeCenterY], rightRadius,'EdgeColor', 'g');
+%     viscircles([mouthX, mouthY], rightRadius,'EdgeColor', 'b');
 %     pause;
     
     referenceDirection = [0 1];
@@ -689,27 +600,45 @@ function output = detectFace(rgbImage)
 
 %     figure; imshow(face); title('face before rotated'); pause;
     
-    marker=zeros(face(1:2));
+    
+    marker=zeros(size(face(:,:,1)));
+    originalMarker = marker;
     
     face = imrotate(face, -angle);
+    rgbImage = imrotate(rgbImage, -angle);
     
-    marker(round(leftEyeCenterX), round(leftEyeCenterY))=1;
+    marker(round(leftEyeCenterY), round(leftEyeCenterX))=1;
     marker_rot = imrotate(marker, -angle);
-    [leftEyeCenterX, leftEyeCenterY]=find(marker_rot);
+    [leftEyeCenterY, leftEyeCenterX]=find(marker_rot);
+  
+    marker = originalMarker;
+    marker(round(rightEyeCenterY), round(rightEyeCenterX))=1;
+    marker_rot = imrotate(marker, -angle);
+    [rightEyeCenterY, rightEyeCenterX]=find(marker_rot);
     
-    s=size(face);
-    marker=zeros(s(1:2));
-    marker(round(rightEyeCenterX), round(rightEyeCenterY))=1;
+    marker = originalMarker;
+    marker(round(mouthY), round(mouthX))=1;
     marker_rot = imrotate(marker, -angle);
-    [rightEyeCenterX, rightEyeCenterY]=find(marker_rot);
+    [mouthY, mouthX]=find(marker_rot);
 
-    
-%     [rightEyeCenterX, rightEyeCenterY] = imrotate([rightEyeCenterX, rightEyeCenterY], -angle);
-    
 %     figure; imshow(face); title('face after rotated'); pause;
 %     viscircles([leftEyeCenterX, leftEyeCenterY], leftRadius,'EdgeColor','r');
 %     viscircles([rightEyeCenterX, rightEyeCenterY], rightRadius,'EdgeColor', 'g');
+%     viscircles([mouthX, mouthY], rightRadius,'EdgeColor', 'b');
 %     pause;
     
-    output = rgbImage;
+    
+    eyeDistance = rightEyeCenterX - leftEyeCenterX;
+    eyeY = (leftEyeCenterY + rightEyeCenterY) / 2;
+    
+    eyeMouthDistance = mouthY - eyeY;
+    
+    offsetX = eyeDistance * 0.3;
+    offsetY = eyeMouthDistance * 0.2;
+    
+    output = rgbImage(round(eyeY-offsetY) : round(mouthY+offsetY), ...
+                      round(leftEyeCenterX-offsetX) :  round(rightEyeCenterX+offsetX), :);
+    figure; imshow(output); title('output');
+    % pause;
+    
 end
