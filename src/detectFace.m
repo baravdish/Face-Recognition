@@ -1,5 +1,5 @@
 function output = detectFace(rgbImage)
-%     figure; imshow(rgbImage); title('rgbImage'); pause;   
+    figure; imshow(rgbImage); title('rgbImage');    
     
     rgbImage = padarray(rgbImage,[2 2],'both');
     
@@ -163,13 +163,22 @@ function output = detectFace(rgbImage)
     [sortedConvexAreas, sortedIndices] = sort(convexAreas, 2, 'descend');
     
     filteredFaceMask = ismember(labeledImage, sortedIndices(1));
+%     figure; imshow(filteredFaceMask); title('filteredFaceMask'); pause;
+    filteredFaceMaskFilled = imfill(filteredFaceMask, 'holes');
+%     figure; imshow(filteredFaceMaskFilled); title('filteredFaceMaskFilled'); pause;
+    filteredFaceMaskFilledEroded = imerode(filteredFaceMaskFilled, strel('disk', 1));
+%     figure; imshow(filteredFaceMaskFilledEroded); title('filteredFaceMaskFilledEroded'); pause;
+    filteredFaceMaskBorder = xor(filteredFaceMaskFilled, filteredFaceMaskFilledEroded);
+%     figure; imshow(filteredFaceMask); title('filteredFaceMask'); pause;
+    
     originalFilteredFaceMask = imdilate(originalFilteredFaceMask, strel('disk', 1));
     originalFilteredFaceMask = imerode(originalFilteredFaceMask, strel('disk', 1));
-    filteredFaceMaskCopy2 = originalFilteredFaceMask - and(originalFilteredFaceMask, filteredFaceMask); 
+    filteredFaceMaskCopy2 = originalFilteredFaceMask - and(originalFilteredFaceMask, filteredFaceMaskBorder); 
     filteredFaceMaskCopy2 = imfill(filteredFaceMaskCopy2, 'holes');
     
     filteredFaceMaskEyes = filteredFaceMask;
     filteredFaceMaskEyes = imfill(filteredFaceMaskEyes, 'holes');
+    
     
     filteredFaceMaskCopy = filteredFaceMaskCopy - filteredFaceMask;
     filteredFaceMaskCopy = imfill(filteredFaceMaskCopy, 'holes');
