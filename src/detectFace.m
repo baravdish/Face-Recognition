@@ -608,18 +608,33 @@ function output = detectFace(rgbImage)
     rgbImage = imrotate(rgbImage, -angle);
     
     marker(round(leftEyeCenterY), round(leftEyeCenterX))=1;
-    marker_rot = imrotate(marker, -angle);
-    [leftEyeCenterY, leftEyeCenterX]=find(marker_rot);
-  
+%     figure; imshow(marker); title('left eye marker before'); pause;
+    marker_rot = imrotate(marker, -angle, 'bicubic');
+%     figure; imshow(marker_rot); title('left eye marker after'); pause;
+    [leftEyeCenterY, leftEyeCenterX]=find(marker_rot > 0);
+    leftEyeCenterY = leftEyeCenterY(1);
+    leftEyeCenterX = leftEyeCenterX(1);
+%     figure; imshow(marker_rot); title('left eye marker_rot'); pause;
+    
     marker = originalMarker;
     marker(round(rightEyeCenterY), round(rightEyeCenterX))=1;
-    marker_rot = imrotate(marker, -angle);
-    [rightEyeCenterY, rightEyeCenterX]=find(marker_rot);
+%     figure; imshow(marker); title('right eye marker before'); pause;
+    marker_rot = imrotate(marker, -angle, 'bicubic');
+%     figure; imshow(marker_rot); title('right eye marker after'); pause;
+    [rightEyeCenterY, rightEyeCenterX]=find(marker_rot > 0);
+    rightEyeCenterY = rightEyeCenterY(1);
+    rightEyeCenterX = rightEyeCenterX(1);
+%     figure; imshow(marker_rot); title('right eye marker_rot'); pause;
     
     marker = originalMarker;
     marker(round(mouthY), round(mouthX))=1;
-    marker_rot = imrotate(marker, -angle);
-    [mouthY, mouthX]=find(marker_rot);
+%     figure; imshow(marker); title('mouth marker before'); pause;
+    marker_rot = imrotate(marker, -angle, 'bicubic');
+%     figure; imshow(marker_rot); title('mouth marker after'); pause;
+    [mouthY, mouthX]=find(marker_rot > 0);
+    mouthY = mouthY(1);
+    mouthX = mouthX(1);
+%     figure; imshow(marker_rot); title('mouth marker_rot'); pause;
 
 %     figure; imshow(face); title('face after rotated'); pause;
 %     viscircles([leftEyeCenterX, leftEyeCenterY], leftRadius,'EdgeColor','r');
@@ -633,8 +648,8 @@ function output = detectFace(rgbImage)
     
     eyeMouthDistance = mouthY - eyeY;
     
-    offsetX = eyeDistance * 0.3;
-    offsetY = eyeMouthDistance * 0.2;
+    offsetX = eyeDistance * 0.5;
+    offsetY = eyeMouthDistance * 0.4;
     
     output = rgbImage(round(eyeY-offsetY) : round(mouthY+offsetY), ...
                       round(leftEyeCenterX-offsetX) :  round(rightEyeCenterX+offsetX), :);
