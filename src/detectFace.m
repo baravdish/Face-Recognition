@@ -74,6 +74,7 @@
 % end
 
 function output = detectFace(input)
+<<<<<<< HEAD
     
 %     figure
 %     title('input');
@@ -89,6 +90,11 @@ function output = detectFace(input)
 %     imshow(input);
 %     pause;
 %     
+=======
+  
+    
+
+>>>>>>> ae6fa4ab063fdb623d3b41a0b77a8379859ceaaf
     imgYCbCr = rgb2ycbcr(input);
     
     Y = imgYCbCr(:,:,1);
@@ -195,9 +201,17 @@ function output = detectFace(input)
 %     title('faceMask');
 %     imshow(faceMask);
     
+    figure
+    imshow(faceMask)
     faceMask = repmat(faceMask, [1,1,3]);
     face = input.*uint8(faceMask);
+<<<<<<< HEAD
     
+=======
+        imshow(face)
+    % Crop face
+    [row, col] = find(face(:,:,1) ~= 0);
+>>>>>>> ae6fa4ab063fdb623d3b41a0b77a8379859ceaaf
     
         figure;
     title('face');
@@ -420,6 +434,7 @@ v = faceHSV(:,:,3);
     maxRow = max(row);
     
     cropImg = input(minRow:maxRow, minCol:maxCol, :);
+<<<<<<< HEAD
     faceCropped = face(minRow:maxRow, minCol:maxCol, :);
 
 %     % EyeMap & MouthMap
@@ -806,5 +821,5 @@ v = faceHSV(:,:,3);
 
     F1DS = sqrt(ux(1,1)^2 + uy(1,1)^2)*length(dydx);
     output = [dydx floor(F1DS-5) dominantHsv(1) dominantHsv(2) dominantHsv(3) eyeColor(1) eyeColor(2) eyeColor(3)];
-
+    
 end
