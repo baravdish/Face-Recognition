@@ -28,6 +28,6 @@ end
 %% 
 for i = 1:length(no_access_images)
     
-    result = tnm034(hard_images{i})
+    result = tnm034(no_access_images{i})
     
 end
