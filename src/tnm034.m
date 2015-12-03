@@ -8,7 +8,8 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 
 function id = tnm034(im)
-  balanced_image = whiteBalance(im);
+  balanced_image = colorCorrection(im);
+%   balanced_image = color_normalization(im);
   face_image = detectFace(balanced_image);
   id = face_image;
   %   normalized_image = normalizeImage(face_image);
