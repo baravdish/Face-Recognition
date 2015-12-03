@@ -47,7 +47,11 @@ addpath src
 % return;
 
 
-result = tnm034(imread('img/rotated2.jpg'));
+%result = tnm034(imread('img/rotated2.jpg'));
+
+im = hard_images{15};
+imshow(im)
+result = tnm034(im)
 return;
 
 result = tnm034(imread('img/rotated3.jpg'));

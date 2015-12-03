@@ -7,5 +7,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 
 function output = verify(input)
-  output = 1;
+  database = load('database.mat');
+  sizeOfDatabase = size(database.database);
+  [id, id_false, min_value] = testImage(input, database.database, sizeOfDatabase(1));
+  
+  output = id;
 end
