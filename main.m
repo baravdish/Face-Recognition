@@ -48,6 +48,7 @@ addpath src
 
 
 result = tnm034(imread('img/rotated2.jpg'));
+return;
 
 result = tnm034(imread('img/rotated3.jpg'));
 
