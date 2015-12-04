@@ -1,4 +1,4 @@
-function [id, id_false, min_value] = testImage(img, database, size_of_database)
+function [id, id_false, min_value, threshold] = testImage(img, database, size_of_database)
   % img = equalize(img);
   img = rgb2gray(img);
   img = imresize(img, [200, 200]);
@@ -23,7 +23,8 @@ function [id, id_false, min_value] = testImage(img, database, size_of_database)
 
   id_false = index;
 
-  if(value < 0.0013)
+  threshold = 0.001350;
+  if(value < threshold)
     id = index;
   else
     id = 0;
