@@ -24,7 +24,7 @@ function [leftEyeCenterX, leftEyeCenterY, leftEyeRadius, ...
     centerX1 = centersBright(1,1,1);
     centerY1 = centersBright(1,2,1);
     radius1 = radiiBright(1,1);
-    irisMask = ((rows - centerY1).^2 + (cols - centerX1).^2) <= radius1.^2;
+%     irisMask = ((rows - centerY1).^2 + (cols - centerX1).^2) <= radius1.^2;
     
     centerX2 = centersBright(2,1,1);
     centerY2 = centersBright(2,2,1);

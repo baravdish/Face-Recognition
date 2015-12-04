@@ -6,43 +6,7 @@ function foregroundMask = extractForeground(grayImage, overSaturatedMask, rgbIma
     
     lowFrequencyParts = medfilt2(adjustedGrayImageWithoutOversaturation);
     highFrequencyParts = imfilter(lowFrequencyParts, fspecial('log'));
-    
-%     imshow(highFrequencyParts); title('highFrequencyParts'); pause;
-    
-% %     Try with otsu threshold
-%     otsuLevel = graythresh(rgbImage);
-%     bw = im2bw(rgbImage, otsuLevel);
-%     bw = bwareaopen(bw, 50);
-%     bw = ~bw;
-%     bw = imfill(bw, 'holes');
-% 
-%     surface1 = highFrequencyParts.*uint8(bw);
-%     surface2 = highFrequencyParts.*uint8(~bw);
-%     
-%     surface1HighFrequencyParts = highFrequencyParts.*uint8(surface1);
-%     foregroundPercentage = (100 * sum(surface1HighFrequencyParts(:))) / (length(nonzeros(surface1(:)))*255);
-%     
-%     surface2HighFrequencyParts = highFrequencyParts.*uint8(surface2);
-%     backgroundPercentage = (100 * sum(surface2HighFrequencyParts(:))) / (length(nonzeros(surface2(:)))*255);
-%     
-%     foreground = bw;
-%       
-%     if backgroundPercentage > foregroundPercentage
-%        foreground = ~bw; 
-%        temp = foregroundPercentage;
-%        foregroundPercentage = backgroundPercentage;
-%        backgroundPercentage = temp;
-%     end
-%     
-%     if backgroundPercentage < 30 && (foregroundPercentage / backgroundPercentage) > 2
-%         % The large background found by otsu is homogenous
-%         foregroundMask = imdilate(foreground, strel('disk', 10));
-%         foregroundMask = imfill(foregroundMask, 'holes');
-%         foregroundMask = imerode(foregroundMask, strel('disk', 10));
-% %         figure; imshow(foregroundMask); title('foregroundMask by otsu'); pause;
-%         return;
-%     end
-    
+        
     edges = edge(adjustedGrayImageWithoutOversaturation, 'canny');
 
     blobs = ~imdilate(edges, strel('disk', 2));

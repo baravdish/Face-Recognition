@@ -9,7 +9,14 @@ function output = detectFace(rgbImage)
     hsvImage = rgb2hsv(rgbImage);
 %     figure; imshow(hsvImage); title('hsvImage'); pause;
 
-    [estimatedSkinMask, Y, Cb, Cr] = extractSkinColorFromYCbCr(rgbImage);
+    ycbcrImage = rgb2ycbcr(rgbImage);
+%     figure; imshow(ycbcrImage); title('ycbcrImage'); pause;
+
+    Y = ycbcrImage(:,:,1);
+    Cb = ycbcrImage(:,:,2);
+    Cr = ycbcrImage(:,:,3);
+    
+    [estimatedSkinMask] = extractSkinColorFromCbCr(Cb, Cr);
 %     figure; imshow(estimatedSkinMask); title('estimatedSkinMask'); pause;   
     
     overSaturatedMask = extractOverSaturated(grayImage);
@@ -28,14 +35,14 @@ function output = detectFace(rgbImage)
     averageFaceColorMask = extractAverageFaceColor(rgbImage, faceMask);
 %     figure; imshow(averageFaceColorMask); title('averageFaceColorMask'); pause;
 
-    finalEyeMap = extractEyeMap(faceMask, filteredFaceMaskCopy, ...
-                                filteredFaceMaskCopy2, overSaturatedMask, ...
-                                estimatedSkinMask, filteredFaceMaskEyes, ...
-                                averageFaceColorMask, grayImage, Y, Cb, Cr);
+    eyeMap = extractEyeMap(faceMask, filteredFaceMaskCopy, ...
+                           filteredFaceMaskCopy2, overSaturatedMask, ...
+                           estimatedSkinMask, filteredFaceMaskEyes, ...
+                           averageFaceColorMask, grayImage, Y, Cb, Cr);
   %     figure; imshow(finalEyeMap); title('finalEyeMap'); pause;
     
     [leftEyeCenterX, leftEyeCenterY, leftEyeRadius, ...
-     rightEyeCenterX, rightEyeCenterY, rightEyeRadius] = extractEyes(finalEyeMap);
+     rightEyeCenterX, rightEyeCenterY, rightEyeRadius] = extractEyes(eyeMap);
     
     [leftEyeCenterX, leftEyeCenterY, ...
      rightEyeCenterX, rightEyeCenterY, ...
@@ -59,6 +66,6 @@ function output = detectFace(rgbImage)
     output = rgbImage(round(eyesMeanY-offsetY) : round(mouthY+offsetY), ...
                       round(leftEyeCenterX-offsetX) : round(rightEyeCenterX+offsetX), :);
     
-%     figure; imshow(output); title('output'); %pause;
+    figure; imshow(output); title('output'); %pause;
     
 end

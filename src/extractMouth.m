@@ -30,16 +30,16 @@ function [mouthX, mouthY] = extractMouth(faceMask, face, nonMouthMask)
     mouthMap = imfill(mouthMap, 'holes');
     mouthMap = imerode(mouthMap, strel('disk', 4));
 
-    BW = and(mouthMap, ~nonMouthMask);
+    mouthMask = and(mouthMap, ~nonMouthMask);
     
 %     figure; imshow(faceMask); title('faceMask'); pause;
 %     figure; imshow(mouthMap); title('mouthMap'); pause;
 %     figure; imshow(nonMouthRegion); title('eyeRegionMask'); pause;
 
-    BW = ExtractNLargestBlobs(BW, 1);
-    s = regionprops(BW, mouthMap, {'Centroid'});
+    mouthMask = ExtractNLargestBlobs(mouthMask, 1);
+    mouthBlobs = regionprops(mouthMask, mouthMap, {'Centroid'});
 
-    mouthX = s(1).Centroid(1);
-    mouthY = s(1).Centroid(2);
+    mouthX = mouthBlobs(1).Centroid(1);
+    mouthY = mouthBlobs(1).Centroid(2);
     
 end
