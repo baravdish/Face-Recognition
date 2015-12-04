@@ -156,7 +156,29 @@ if decorr == 1
     % Compute covariance matrix (covariance between pixel positions x_i and x_j is rho^||x_i-x_j||)
     [xp,yp]=meshgrid(1:winSize,1:winSize);
     pp=[xp(:) yp(:)];
-    dd=dist(pp,pp');
+    % pp
+    % dd=dist(pp,pp')
+
+    % dist function
+    w = pp;
+    p = pp';
+    S = size(w,1);
+    Q = size(p,2);
+    z2 = zeros(S,Q);
+    if (Q<S)
+      p = p';
+      copies = zeros(1,S);
+      for q=1:Q
+        z2(:,q) = sum((w-p(q+copies,:)).^2,2);
+      end
+    else
+      w = w';
+      copies = zeros(1,Q);
+      for i=1:S
+        z2(i,:) = sum((w(:,i+copies)-p).^2,1);
+      end
+    end
+    dd = sqrt(z2);
     C=rho.^dd;
 
     % Form 2-D filters q1, q2, q3, q4 and corresponding 2-D matrix operator M (separating real and imaginary parts)

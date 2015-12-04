@@ -7,9 +7,8 @@
 % and ‘0’ for all other faces.
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function [id, id_false, min_value, threshold] = tnm034(im)
+function [id, id_false, min_value] = tnm034(im, height, width, threshold, kernel_size, decorr, freqestim)
   balanced_image = colorCorrection(im);
   face_image = detectFace(balanced_image);
-  id = 0;
-%   [id, id_false, min_value, threshold] = verify(face_image);
+  [id, id_false, min_value] = verify(face_image, height, width, threshold, kernel_size, decorr, freqestim);
 end

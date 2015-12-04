@@ -6,10 +6,10 @@
 % and ‘0’ for all other faces.
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function [id, id_false, min_value, threshold] = verify(input)
+function [id, id_false, min_value] = verify(input, height, width, threshold, kernel_size, decorr, freqestim)
   database = load('database.mat');
   sizeOfDatabase = size(database.database);
-  [id, id_false, min_value, threshold] = testImage(input, database.database, sizeOfDatabase(1));
+  [id, id_false, min_value] = testImage(input, database.database, sizeOfDatabase(1), height, width, threshold, kernel_size, decorr, freqestim);
 
   % output = id;
 end

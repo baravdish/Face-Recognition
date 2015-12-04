@@ -1,4 +1,4 @@
-function [] = stats(break_at_failure)
+function [] = stats(build_database, write_output, break_at_failure)
   clc
   close all
   warning off
@@ -12,6 +12,17 @@ function [] = stats(break_at_failure)
   false_positives = 0;
   false_negatives = 0;
   failed_recognitions = 0;
+  lowest_no_access_comparison = realmax;
+  height = 200; % Requires that the database is rebuilt!
+  width = 200; % Requires that the database is rebuilt!
+  threshold = 0.0014; % Requires that the database is rebuilt!
+  kernel_size = 21; % Requires that the database is rebuilt!
+  decorr = 1; % Requires that the database is rebuilt!
+  freqestim = 1; % Requires that the database is rebuilt!
+
+  if build_database == 1
+    createDatabase(height, width, kernel_size, decorr, freqestim);
+  end
 
   for n = 1 : number_of_people
     folder_name = sprintf('img/tests/%d/', n);
@@ -36,10 +47,13 @@ function [] = stats(break_at_failure)
       image = images(k);
       has_succeded = false;
       tic
-      [id, id_false, min_value, threshold] = tnm034(image{1});
+      [id, id_false, min_value] = tnm034(image{1}, height, width, threshold, kernel_size, decorr, freqestim);
       time(n, k) = toc;
 
       if n == number_of_people
+        if lowest_no_access_comparison > min_value
+          lowest_no_access_comparison = min_value;
+        end
         if id == 0
           success_counter = success_counter + 1;
           has_succeded = true;
@@ -103,6 +117,7 @@ function [] = stats(break_at_failure)
   disp(sprintf('Number of false positives: %i', false_positives));
   disp(sprintf('Number of false negatives: %i', false_negatives));
   disp(sprintf('Number of failed recognitions: %i', failed_recognitions));
+  disp(sprintf('Lowest no access comparision: %f', lowest_no_access_comparison));
 
   fail_rate = fail_counter / (success_counter + fail_counter);
   success_rate = success_counter / (success_counter + fail_counter);
@@ -133,4 +148,31 @@ function [] = stats(break_at_failure)
   disp(sprintf('Average time: %0.2fs', average_time));
   disp(sprintf('Longest time: %0.2fs', longest_time));
   disp(sprintf('Shortest time: %0.2fs', shortest_time));
+
+  if write_output == 1
+    format_spec = ['==========Parameters==========\n' ...
+                  'Height: %i\n' ...
+                  'Width: %i\n' ...
+                  'Threshold: %f\n' ...
+                  'Kernel size: %i\n' ...
+                  'Decorrelation: %i\n' ...
+                  'Local frequency estimation: %i\n' ...
+                  '==========Results==========\n' ...
+                  'Number of images: %i\n' ...
+                  'Number of successes: %i\n' ...
+                  'Number of failures: %i\n' ...
+                  'Number of false positives: %i\n' ...
+                  'Number of false negatives: %i\n' ...
+                  'Number of failed recognitions: %i\n' ...
+                  'Lowest no access comparision: %f\n' ...
+                  'Success rate: %i%%\n' ...
+                  'Fail rate: %i%%\n' ...
+                  'Total time: %0.2fs\n' ...
+                  'Average time: %0.2fs\n' ...
+                  'Longest time: %0.2fs\n' ...
+                  'Shortest time: %0.2fs\n' ...
+                  '==============================\n\n'];
+    fid = fopen('stats.txt', 'a');
+    fprintf(fid, format_spec, height, width, threshold, kernel_size, decorr, freqestim, total_number_of_images, success_counter, fail_counter, false_positives, false_negatives, failed_recognitions, lowest_no_access_comparison, round(success_rate * 100), round(fail_rate * 100), total_time, average_time, longest_time, shortest_time);
+  end
 end
