@@ -13,10 +13,7 @@ function finalEyeMap = extractEyeMap(faceMask, filteredFaceMaskCopy, ...
     
     eyeMap = eyeMapChroma .* eyeMapLuma;
     
-    eyeMap = im2double(eyeMap);
-    eyeMap = 255 * ((eyeMap - min(eyeMap(:))) ...
-                 ./ (max(eyeMap(:)) - min(eyeMap(:))));
-    eyeMap = im2double(eyeMap);
+    eyeMap = normalizeEyeMap(eyeMap);
              
     originalEyeMap = eyeMap;
 %     figure; imshow(eyeMap, []); title('originalEyeMap'); pause;
@@ -89,4 +86,11 @@ function eyeMapLuma = extractEyeMapLuma(grayImage, Y)
     end
 
     eyeMapLuma = im2double(eyeMapLuma);
+end
+
+
+function eyeMap = normalizeEyeMap(eyeMap) 
+    eyeMap = im2double(eyeMap);
+    eyeMap = 255 * ((eyeMap - min(eyeMap(:))) ...
+                 ./ (max(eyeMap(:)) - min(eyeMap(:))));
 end

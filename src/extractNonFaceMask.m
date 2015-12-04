@@ -14,9 +14,5 @@ function nonFaceMask = extractNonFaceMask(Cb, Cr, hsvImage)
     nonFaceMask = bwareaopen(nonFaceMask, 1000);
     nonFaceMask = imdilate(nonFaceMask, strel('disk', 5));
 %     figure; imshow(nonFaceMask); title('nonFaceMask'); pause;
-    
-%     nonFaceMaskRep = repmat(nonFaceMask, [1,1,3]);
-%     nonFace = rgbImage.*uint8(nonFaceMaskRep);
-%     figure; imshow(nonFace); title('nonFace'); pause;
 
 end
