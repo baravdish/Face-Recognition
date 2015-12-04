@@ -27,7 +27,7 @@ function output = detectFace(rgbImage)
     
     nonFaceMask = extractNonFaceMask(Cb, Cr, hsvImage);
 %     figure; imshow(nonFaceMask); title('nonFaceMask'); pause;
-
+    
     [faceMask, face, filteredFaceMaskCopy, filteredFaceMaskCopy2, ...
      filteredFaceMaskEyes] = extractFaceMask(rgbImage, foregroundMask, ....
                                              estimatedSkinMask, nonFaceMask);
@@ -39,7 +39,7 @@ function output = detectFace(rgbImage)
                            filteredFaceMaskCopy2, overSaturatedMask, ...
                            estimatedSkinMask, filteredFaceMaskEyes, ...
                            averageFaceColorMask, grayImage, Y, Cb, Cr);
-  %     figure; imshow(finalEyeMap); title('finalEyeMap'); pause;
+%     figure; imshow(eyeMap); title('eyeMap'); pause;
     
     [leftEyeCenterX, leftEyeCenterY, leftEyeRadius, ...
      rightEyeCenterX, rightEyeCenterY, rightEyeRadius] = extractEyes(eyeMap);

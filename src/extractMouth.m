@@ -32,10 +32,6 @@ function [mouthX, mouthY] = extractMouth(faceMask, face, nonMouthMask)
 
     mouthMask = and(mouthMap, ~nonMouthMask);
     
-%     figure; imshow(faceMask); title('faceMask'); pause;
-%     figure; imshow(mouthMap); title('mouthMap'); pause;
-%     figure; imshow(nonMouthRegion); title('eyeRegionMask'); pause;
-
     mouthMask = ExtractNLargestBlobs(mouthMask, 1);
     mouthBlobs = regionprops(mouthMask, mouthMap, {'Centroid'});
 

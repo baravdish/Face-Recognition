@@ -1,11 +1,19 @@
-function [faceMask, face, filteredFaceMaskCopy, filteredFaceMaskCopy2, filteredFaceMaskEyes] = extractFaceMask(rgbImage, foregroundMask, estimatedSkinMask, nonFaceMask)
+function [faceMask, face, ...
+          filteredFaceMaskCopy, ...
+          filteredFaceMaskCopy2, ...
+          filteredFaceMaskEyes] = extractFaceMask(rgbImage, ...
+                                                  foregroundMask, ...
+                                                  estimatedSkinMask, ...
+                                                  nonFaceMask)
 
     faceMask = foregroundMask & estimatedSkinMask & ~nonFaceMask;
-    
+%     figure; imshow(faceMask); title('faceMask'); pause;
+   
     faceMask = imfill(faceMask, 'holes');
     faceMask = ExtractNLargestBlobs(faceMask, 1);
     faceMask = imdilate(faceMask, strel('disk', 8));
     faceMask = imerode(faceMask, strel('disk', 10));
+%     figure; imshow(faceMask); title('faceMask'); pause; 
     
     faceMask = shrinkFaceMask(faceMask);
 %     figure; imshow(faceMask); title('faceMask'); pause; 
@@ -37,25 +45,27 @@ function [faceMask, face, filteredFaceMaskCopy, filteredFaceMaskCopy2, filteredF
     originalFilteredFaceMask = imerode(originalFilteredFaceMask, strel('disk', 1));
     filteredFaceMaskCopy2 = originalFilteredFaceMask - and(originalFilteredFaceMask, filteredFaceMaskBorder); 
     filteredFaceMaskCopy2 = imfill(filteredFaceMaskCopy2, 'holes');
+%     figure; imshow(filteredFaceMaskCopy2); title('filteredFaceMaskCopy2'); pause;
     
-    filteredFaceMaskEyes = filteredFaceMask;
-    filteredFaceMaskEyes = imfill(filteredFaceMaskEyes, 'holes');
+    filteredFaceMaskEyes = filteredFaceMaskFilled;
+%     figure; imshow(filteredFaceMaskEyes); title('filteredFaceMaskEyes'); pause;
     
     filteredFaceMaskCopy = filteredFaceMaskCopy - filteredFaceMask;
-    filteredFaceMaskCopy = imfill(filteredFaceMaskCopy, 'holes');
     filteredFaceMaskCopy = imdilate(filteredFaceMaskCopy, strel('disk', 5));
     filteredFaceMaskCopy = imfill(filteredFaceMaskCopy, 'holes');
+%     figure; imshow(filteredFaceMaskCopy); title('filteredFaceMaskCopy'); pause;
+    
     filteredFaceMask = imdilate(filteredFaceMask, strel('disk', 30));
 
-    filteredFaceMask2 = filteredFaceMask;
-    filteredFaceMask2 = imfill(filteredFaceMask2, 'holes');
+    filteredFaceMask2 = imfill(filteredFaceMask, 'holes');
     filteredFaceMask = ~xor(~filteredFaceMask, filteredFaceMask2);
 
     filteredFaceMask = ExtractNLargestBlobs(filteredFaceMask, 1);
     filteredFaceMask = imdilate(filteredFaceMask, strel('disk',20));
     filteredFaceMask = imdilate(filteredFaceMask, strel('disk',20));
     filteredFaceMask = imdilate(filteredFaceMask, strel('disk',20));
-  
+%     figure; imshow(filteredFaceMask); title('filteredFaceMask'); pause;
+    
     faceMask = and(filteredFaceMask, faceMask);
     faceMaskRep = repmat(faceMask, [1,1,3]);
     face = rgbImage.*uint8(faceMaskRep);
