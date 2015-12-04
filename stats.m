@@ -15,10 +15,10 @@ function [] = stats(build_database, write_output, break_at_failure)
   lowest_no_access_comparison = realmax;
   height = 200; % Requires that the database is rebuilt!
   width = 200; % Requires that the database is rebuilt!
-  threshold = 0.0013; % Requires that the database is rebuilt!
+  threshold = 0.0014; % Requires that the database is rebuilt!
   kernel_size = 21; % Requires that the database is rebuilt!
   decorr = 1; % Requires that the database is rebuilt!
-  freqestim = 3; % Requires that the database is rebuilt!
+  freqestim = 1; % Requires that the database is rebuilt!
 
   if build_database == 1
     createDatabase(height, width, kernel_size, decorr, freqestim);
@@ -117,7 +117,7 @@ function [] = stats(build_database, write_output, break_at_failure)
   disp(sprintf('Number of false positives: %i', false_positives));
   disp(sprintf('Number of false negatives: %i', false_negatives));
   disp(sprintf('Number of failed recognitions: %i', failed_recognitions));
-  disp(sprintf('Number of lowest no access comparision: %f', lowest_no_access_comparison));
+  disp(sprintf('Lowest no access comparision: %f', lowest_no_access_comparison));
 
   fail_rate = fail_counter / (success_counter + fail_counter);
   success_rate = success_counter / (success_counter + fail_counter);
@@ -164,7 +164,7 @@ function [] = stats(build_database, write_output, break_at_failure)
                   'Number of false positives: %i\n' ...
                   'Number of false negatives: %i\n' ...
                   'Number of failed recognitions: %i\n' ...
-                  'Number of lowest no access comparision: %f\n' ...
+                  'Lowest no access comparision: %f\n' ...
                   'Success rate: %i%%\n' ...
                   'Fail rate: %i%%\n' ...
                   'Total time: %0.2fs\n' ...
