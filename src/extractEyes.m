@@ -1,21 +1,11 @@
 function [leftEyeCenterX, leftEyeCenterY, leftEyeRadius, ...
           rightEyeCenterX, rightEyeCenterY, rightEyeRadius] = extractEyes(finalEyeMap)
-      
+           
     [centersBright, radiiBright] = imfindcircles(finalEyeMap, [4 20], ...
                                                  'ObjectPolarity', 'bright', ...
                                                  'Method', 'TwoStage', ...
                                                  'sensitivity', 0.99);
-             
-%     figure; imshow(I); title('I'); pause;
-%     viscircles(centersDark(1:2,:), radiiDark(1:2),'EdgeColor','r');
-%     viscircles(centersBright(1:2,:), radiiBright(1:2),'EdgeColor', 'b');
-    
-%     viscircles(centersDark(1:10,:), radiiDark(1:10), 'EdgeColor', 'r');
-%     viscircles(centersDark(1:2,:), radiiDark(1:2),'EdgeColor', 'g');
-%     viscircles(centersBright(1:10,:), radiiBright(1:10),'EdgeColor', 'b');
-
-% pause;
-
+                                            
     eyeMapSize = size(finalEyeMap);
     imageSizeX = eyeMapSize(1,1,1);
     imageSizeY = eyeMapSize(1,2,1);
@@ -64,11 +54,5 @@ function [leftEyeCenterX, leftEyeCenterY, leftEyeRadius, ...
         rightEyeCenterY = centerY1;  
         rightEyeRadius = radius1;
     end
-    
-%     figure; imshow(face); title('face');
-%     viscircles([leftEyeCenterX, leftEyeCenterY], leftRadius,'EdgeColor','r');
-%     viscircles([rightEyeCenterX, rightEyeCenterY], rightRadius,'EdgeColor', 'g');
-% %     viscircles([mouthX, mouthY], rightRadius,'EdgeColor', 'b');
-%     pause;
 
 end
