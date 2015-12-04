@@ -34,12 +34,23 @@ function output = detectFace(rgbImage)
     
     averageFaceColorMask = extractAverageFaceColor(rgbImage, faceMask);
 %     figure; imshow(averageFaceColorMask); title('averageFaceColorMask'); pause;
-
+    
+% %     averageFaceColorMask2 = trueColorize(rgbImage, averageFaceColorMask, [0.5, 0.1, 0.5]);
+%     averageFaceColorMask2 = meanColorize(rgbImage, averageFaceColorMask, 0.05);
+%     
+% %     averageFaceColorMask2 = averageFaceColorMask;
+%     averageFaceColorMask2 = and(averageFaceColorMask2, faceMask);
+%     averageFaceColorMask2 = and(averageFaceColorMask2, averageFaceColorMask);
+%     
+%     averageFaceColorMask2 = xor(averageFaceColorMask2, ...
+%                                 imfill(averageFaceColorMask2, 'holes'));
+%     figure; imshow(averageFaceColorMask2); title('averageFaceColorMask2');
+    
     eyeMap = extractEyeMap(faceMask, filteredFaceMaskCopy, ...
                            filteredFaceMaskCopy2, overSaturatedMask, ...
                            estimatedSkinMask, filteredFaceMaskEyes, ...
                            averageFaceColorMask, grayImage, Y, Cb, Cr);
-%     figure; imshow(eyeMap); title('eyeMap'); pause;
+%     figure; imshow(eyeMap./max(eyeMap(:))); title('eyeMap'); pause;
     
     [leftEyeCenterX, leftEyeCenterY, leftEyeRadius, ...
      rightEyeCenterX, rightEyeCenterY, rightEyeRadius] = extractEyes(eyeMap);
@@ -66,6 +77,6 @@ function output = detectFace(rgbImage)
     output = rgbImage(round(eyesMeanY-offsetY) : round(mouthY+offsetY), ...
                       round(leftEyeCenterX-offsetX) : round(rightEyeCenterX+offsetX), :);
     
-%     figure; imshow(output); title('output'); %pause;
+    figure; imshow(output); title('output'); %pause;
     
 end
