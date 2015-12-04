@@ -10,5 +10,6 @@
 function id = tnm034(im)
   balanced_image = colorCorrection(im);
   face_image = detectFace(balanced_image);
-  id = verify(face_image);
+  id = 0;
+%   id = verify(face_image);
 end

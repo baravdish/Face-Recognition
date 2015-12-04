@@ -66,6 +66,6 @@ function output = detectFace(rgbImage)
     output = rgbImage(round(eyesMeanY-offsetY) : round(mouthY+offsetY), ...
                       round(leftEyeCenterX-offsetX) : round(rightEyeCenterX+offsetX), :);
     
-    figure; imshow(output); title('output'); %pause;
+%     figure; imshow(output); title('output'); %pause;
     
 end

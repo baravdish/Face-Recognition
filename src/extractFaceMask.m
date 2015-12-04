@@ -47,6 +47,12 @@ function [faceMask, face, ...
     filteredFaceMaskCopy2 = imfill(filteredFaceMaskCopy2, 'holes');
 %     figure; imshow(filteredFaceMaskCopy2); title('filteredFaceMaskCopy2'); pause;
     
+%     filla = imfill(filteredFaceMaskBorder, 'holes');
+%     filla = imerode(filla, strel('disk', 5));
+%     filteredFaceMaskCopy3 = and(filteredFaceMaskCopy2, filla);
+%     figure; imshow(filteredFaceMask); title('filteredFaceMask'); pause;
+%     figure; imshow(filteredFaceMaskCopy2); title('filteredFaceMask'); pause;
+    
     filteredFaceMaskEyes = filteredFaceMaskFilled;
 %     figure; imshow(filteredFaceMaskEyes); title('filteredFaceMaskEyes'); pause;
     
