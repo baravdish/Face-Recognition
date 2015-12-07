@@ -32,7 +32,14 @@ function [mouthX, mouthY] = extractMouth(faceMask, face, nonMouthMask)
 
     mouthMask = and(mouthMap, ~nonMouthMask);
     
+    try
     mouthMask = ExtractNLargestBlobs(mouthMask, 1);
+    catch
+        warning('extractMouthMap.m failed. At ExtractNLargestBlobs.');
+        mouthMask = -1;
+        return;
+    end
+    
     mouthBlobs = regionprops(mouthMask, mouthMap, {'Centroid'});
 
     mouthX = mouthBlobs(1).Centroid(1);

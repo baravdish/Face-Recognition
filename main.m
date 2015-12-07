@@ -13,17 +13,32 @@ addpath src
 % result = tnm034(access_images{4})
 % return
 
-im = hard_images{15};
-imshow(im)
-result = tnm034(im)
-return;
+% im = hard_images{15};
+% imshow(im)
+% result = tnm034(im)
+% return;
 %%
+% for i = 6:6
 for i = 1:length(access_images)
-   
-    result = tnm034(access_images{i})
+    randNumber = randi([0 5]);
+    img = access_images{i};
+    imgRot = imrotate(img, randNumber, 'crop');
+    
+    imgScale = imresize(img, 1.1);
+    imgHSV = rgb2hsv(img);
+    imgHSV(:,:,3) = imgHSV(:,:,3)*0.7;
+    imgTone = hsv2rgb(imgHSV);
+    imgTone = uint8(255*imgTone);
+%     figure
+%     imshow(imgTone);
 
+    try
+        result = tnm034(imgTone);
+    catch
+        warning('Program failed.');
+        result = 0;
+    end
 end
-
 %%
 for i = 1:length(hard_images)
     

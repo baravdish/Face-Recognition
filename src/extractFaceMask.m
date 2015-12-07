@@ -10,7 +10,15 @@ function [faceMask, face, ...
 %     figure; imshow(faceMask); title('faceMask'); pause;
    
     faceMask = imfill(faceMask, 'holes');
+    
+    try
+        
     faceMask = ExtractNLargestBlobs(faceMask, 1);
+    catch
+        warning('extractFaceMask failed. At ExtractNLargestBlobs.');
+        faceMask = -1;
+        return;
+    end
     faceMask = imdilate(faceMask, strel('disk', 8));
     faceMask = imerode(faceMask, strel('disk', 10));
 %     figure; imshow(faceMask); title('faceMask'); pause; 
