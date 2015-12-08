@@ -1,5 +1,5 @@
-function finalEyeMap = extractEyeMap(faceMask, filteredFaceMaskCopy, ...
-                                     filteredFaceMaskCopy2, overSaturatedMask, ...
+function finalEyeMap = extractEyeMap(faceMask, filteredEyeCandidates1, ...
+                                     filteredEyeCandidates2, overSaturatedMask, ...
                                      estimatedSkinMask, filteredFaceMaskEyes, ...
                                      averageFaceColorMask, grayImage, Y, Cb, Cr)
     
@@ -8,8 +8,12 @@ function finalEyeMap = extractEyeMap(faceMask, filteredFaceMaskCopy, ...
     Cb = uint16(Cb);
     
     eyeMapChroma = extractEyeMapChroma(Cb, Cr);
+%     figure; imshow(eyeMapChroma); title('eyeMapChroma'); pause;
+%     figure; imshow(eyeMapChroma./max(eyeMapChroma(:))); title('eyeMapChroma'); pause;
     
     eyeMapLuma = extractEyeMapLuma(grayImage, Y);
+%     figure; imshow(eyeMapLuma); title('eyeMapLuma'); pause;
+%     figure; imshow(eyeMapLuma./max(eyeMapLuma(:))); title('eyeMapLuma'); pause;
     
     eyeMap = eyeMapChroma .* eyeMapLuma;
     
@@ -17,8 +21,8 @@ function finalEyeMap = extractEyeMap(faceMask, filteredFaceMaskCopy, ...
              
     originalEyeMap = eyeMap;
     
-    eyeMap = eyeMap.*filteredFaceMaskCopy;
-    eyeMap = eyeMap.*filteredFaceMaskCopy2;
+    eyeMap = eyeMap.*filteredEyeCandidates1;
+    eyeMap = eyeMap.*filteredEyeCandidates2;
     eyeMap = eyeMap.*im2double(faceMask);
     eyeMap = eyeMap.*~overSaturatedMask;
     
@@ -34,6 +38,9 @@ function finalEyeMap = extractEyeMap(faceMask, filteredFaceMaskCopy, ...
     eyeMap = imdilate(eyeMap, strel('disk', 10));
 
     finalEyeMap = originalEyeMap;
+%     figure; imshow(originalEyeMap); title('originalEyeMap'); pause;
+%     figure; imshow(originalEyeMap./max(originalEyeMap(:))); title('originalEyeMap'); pause;
+    
     finalEyeMap = finalEyeMap.*eyeMap;
     finalEyeMap = finalEyeMap.*filteredFaceMaskEyes;
     finalEyeMap = finalEyeMap.*faceMask;

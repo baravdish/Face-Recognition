@@ -2,13 +2,14 @@ function [leftEyeCenterX, leftEyeCenterY, ...
           rightEyeCenterX, rightEyeCenterY, ...
           rgbImage, face, faceMask] = rotateFace(leftEyeCenterX, leftEyeCenterY, ...
                                        rightEyeCenterX, rightEyeCenterY, ...
-                                       rgbImage, face, faceMask)
+                                       rgbImage, face, faceMask, ...
+                                       leftRadius, rightRadius)
 
 %     figure; imshow(face); title('face before rotated'); 
 %     viscircles([leftEyeCenterX, leftEyeCenterY], leftRadius,'EdgeColor','r');
 %     viscircles([rightEyeCenterX, rightEyeCenterY], rightRadius,'EdgeColor', 'g');
 %     pause;
-    
+     
     referenceDirection = [0 1];
     eyeDirection = [leftEyeCenterX-rightEyeCenterX, leftEyeCenterY-rightEyeCenterY];
     eyeDirection = eyeDirection / norm(eyeDirection);

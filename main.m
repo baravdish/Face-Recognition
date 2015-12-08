@@ -13,7 +13,7 @@ addpath src
 % result = tnm034(access_images{4})
 % return
 
-im = hard_images{15};
+im = hard_images{6};
 imshow(im)
 result = tnm034(im)
 return;

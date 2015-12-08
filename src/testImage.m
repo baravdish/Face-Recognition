@@ -1,6 +1,12 @@
 function [id, id_false, min_value] = testImage(img, database, size_of_database, height, width, threshold, kernel_size, decorr, freqestim)
   % img = equalize(img);
   img = rgb2gray(img);
+%   img = imgradient(img);
+%   img = imadjust(img);
+%   img = imsharpen(img);
+% img = histeq(img);
+
+
   img = imresize(img, [height, width]);
   % img = histeq(img);
   % img = LogAbout(img);

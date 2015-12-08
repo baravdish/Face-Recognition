@@ -1,7 +1,9 @@
-function output = detectFace(rgbImage)
-
+function output = detectFace(rgbImage, originalRgbImage)
+    
+%     figure; imshow(rgbImage); title('rgbImage')
+    
     rgbImage = padarray(rgbImage, [2 2], 'both');
-%     figure; imshow(rgbImage); title('rgbImage');
+%     figure; imshow(rgbImage); title('padded rgbImage');
 
     grayImage = rgb2gray(rgbImage);
 %     figure; imshow(grayImage); title('grayImage'); pause;
@@ -24,42 +26,34 @@ function output = detectFace(rgbImage)
 
     foregroundMask = extractForeground(grayImage, overSaturatedMask, rgbImage);
 %     figure; imshow(foregroundMask); title('foregroundMask'); pause;
-
+%     figure; imshow(~foregroundMask); title('backgroundMask'); pause;
+    
     nonFaceMask = extractNonFaceMask(Cb, Cr, hsvImage);
 %     figure; imshow(nonFaceMask); title('nonFaceMask'); pause;
 
-    [faceMask, face, filteredFaceMaskCopy, filteredFaceMaskCopy2, ...
+    [faceMask, face, filteredEyeCandidates1, filteredEyeCandidates2, ...
      filteredFaceMaskEyes] = extractFaceMask(rgbImage, foregroundMask, ....
                                              estimatedSkinMask, nonFaceMask);
-
+%     figure; imshow(face); title('face'); pause;
+    
     averageFaceColorMask = extractAverageFaceColor(rgbImage, faceMask);
 %     figure; imshow(averageFaceColorMask); title('averageFaceColorMask'); pause;
-    
-% %     averageFaceColorMask2 = trueColorize(rgbImage, averageFaceColorMask, [0.5, 0.1, 0.5]);
-%     averageFaceColorMask2 = meanColorize(rgbImage, averageFaceColorMask, 0.05);
-%     
-% %     averageFaceColorMask2 = averageFaceColorMask;
-%     averageFaceColorMask2 = and(averageFaceColorMask2, faceMask);
-%     averageFaceColorMask2 = and(averageFaceColorMask2, averageFaceColorMask);
-%     
-%     averageFaceColorMask2 = xor(averageFaceColorMask2, ...
-%                                 imfill(averageFaceColorMask2, 'holes'));
-%     figure; imshow(averageFaceColorMask2); title('averageFaceColorMask2');
-    
-    eyeMap = extractEyeMap(faceMask, filteredFaceMaskCopy, ...
-                           filteredFaceMaskCopy2, overSaturatedMask, ...
+
+    eyeMap = extractEyeMap(faceMask, filteredEyeCandidates1, ...
+                           filteredEyeCandidates2, overSaturatedMask, ...
                            estimatedSkinMask, filteredFaceMaskEyes, ...
                            averageFaceColorMask, grayImage, Y, Cb, Cr);
 %     figure; imshow(eyeMap./max(eyeMap(:))); title('eyeMap'); pause;
     
     [leftEyeCenterX, leftEyeCenterY, leftEyeRadius, ...
      rightEyeCenterX, rightEyeCenterY, rightEyeRadius] = extractEyes(eyeMap);
-
+    
     [leftEyeCenterX, leftEyeCenterY, ...
      rightEyeCenterX, rightEyeCenterY, ...
      rgbImage, face, faceMask] = rotateFace(leftEyeCenterX, leftEyeCenterY, ...
                                             rightEyeCenterX, rightEyeCenterY, ...
-                                            rgbImage, face, faceMask);
+                                            rgbImage, face, faceMask, ...
+                                            leftEyeRadius, rightEyeRadius);
 
     eyesMeanY = (leftEyeCenterY + rightEyeCenterY) / 2;
     eyeDistance = rightEyeCenterX - leftEyeCenterX;
@@ -68,16 +62,22 @@ function output = detectFace(rgbImage)
     nonMouthMask = extractNonMouthMask(face, eyeDistance, eyesMeanY, ...
                                        leftEyeCenterX, rightEyeCenterX, ...
                                        offsetX);
-
+%     figure; imshow(nonMouthMask); title('nonMouthMask'); pause;
+%     figure; imshow(~nonMouthMask); title('~nonMouthMask'); pause;
+    
     [mouthX, mouthY] = extractMouth(faceMask, face, nonMouthMask);
 
     eyeMouthDistance = mouthY - eyesMeanY;
     offsetY = eyeMouthDistance * 0.2; % 0.2
-
-    output = rgbImage(round(eyesMeanY-offsetY) : round(mouthY+offsetY), ...
+    
+%     output = rgbImage(round(eyesMeanY-offsetY) : round(mouthY-2*offsetY), ...
+%                       round(leftEyeCenterX-offsetX) : round(rightEyeCenterX+offsetX), :);
+        output = rgbImage(round(eyesMeanY-offsetY) : round(mouthY+offsetY), ...
                       round(leftEyeCenterX-offsetX) : round(rightEyeCenterX+offsetX), :);
 
-    % figure; imshow(output); title('output'); %pause;
+%     output = lightNorm(output);
+    
+    figure; imshow(output); title('output'); %pause;
 
 end
 

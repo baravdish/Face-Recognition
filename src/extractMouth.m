@@ -23,13 +23,16 @@ function [mouthX, mouthY] = extractMouth(faceMask, face, nonMouthMask)
     
     mouthMap = mouthMap .* uint8(faceMask);
 %     figure; imshow(mouthMap); title('mouthMap'); pause;
-
+%     figure; imshow(~nonMouthMask); pause; %title('~nonMouthMask'); pause;
+    
     mouthMap = mouthMap > 0.5 * max(mouthMap(~nonMouthMask));
 
     mouthMap = imdilate(mouthMap, strel('disk', 4));
     mouthMap = imfill(mouthMap, 'holes');
     mouthMap = imerode(mouthMap, strel('disk', 4));
-
+    
+%     figure; imshow(mouthMap); title('mouthMap'); pause;
+    
     mouthMask = and(mouthMap, ~nonMouthMask);
     
     mouthMask = ExtractNLargestBlobs(mouthMask, 1);

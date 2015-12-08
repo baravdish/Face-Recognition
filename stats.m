@@ -15,8 +15,8 @@ function [] = stats(build_database, write_output, break_at_failure)
   lowest_no_access_comparison = realmax;
   height = 200; % Requires that the database is rebuilt!
   width = 200; % Requires that the database is rebuilt!
-  threshold = 0.0014; % Requires that the database is rebuilt!
-  kernel_size = 21; % Requires that the database is rebuilt!
+  threshold = 0.001440; % Requires that the database is rebuilt! 0.0014
+  kernel_size = 21; % Requires that the database is rebuilt! 21
   decorr = 1; % Requires that the database is rebuilt!
   freqestim = 1; % Requires that the database is rebuilt!
 
