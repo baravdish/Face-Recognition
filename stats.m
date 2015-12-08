@@ -15,9 +15,9 @@ function [] = stats(build_database, write_output, break_at_failure)
   lowest_no_access_comparison = realmax;
   height = 200; % Requires that the database is rebuilt!
   width = 200; % Requires that the database is rebuilt!
-  threshold = 0.0014; % Requires that the database is rebuilt!
+  threshold = 0.001240; % Requires that the database is rebuilt!
   kernel_size = 21; % Requires that the database is rebuilt!
-  decorr = 1; % Requires that the database is rebuilt!
+  decorr = 0; % Requires that the database is rebuilt!
   freqestim = 1; % Requires that the database is rebuilt!
 
   if build_database == 1
@@ -45,6 +45,7 @@ function [] = stats(build_database, write_output, break_at_failure)
 
     for k = 1 : number_of_images
       image = images(k);
+      % imshow(image{1})
       has_succeded = false;
       tic
       [id, id_false, min_value] = tnm034(image{1}, height, width, threshold, kernel_size, decorr, freqestim);
