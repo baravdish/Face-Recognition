@@ -1,4 +1,4 @@
-function [] = stats(build_database, write_output, break_at_failure)
+function [] = stats(build_database, write_output, break_at_failure, break_at_fatal)
   clc
   close all
   warning off
@@ -12,10 +12,11 @@ function [] = stats(build_database, write_output, break_at_failure)
   false_positives = 0;
   false_negatives = 0;
   failed_recognitions = 0;
+  fatal_errors = 0;
   lowest_no_access_comparison = realmax;
   height = 200; % Requires that the database is rebuilt!
   width = 200; % Requires that the database is rebuilt!
-  threshold = 0.001240; % Requires that the database is rebuilt!
+  threshold = 0.001140; % Requires that the database is rebuilt!
   kernel_size = 21; % Requires that the database is rebuilt!
   decorr = 0; % Requires that the database is rebuilt!
   freqestim = 1; % Requires that the database is rebuilt!
@@ -50,53 +51,63 @@ function [] = stats(build_database, write_output, break_at_failure)
       tic
       [id, id_false, min_value] = tnm034(image{1}, height, width, threshold, kernel_size, decorr, freqestim);
       time(n, k) = toc;
-
-      if n == number_of_people
-        if lowest_no_access_comparison > min_value
-          lowest_no_access_comparison = min_value;
-        end
-        if id == 0
-          success_counter = success_counter + 1;
-          has_succeded = true;
-        else
-          fail_counter = fail_counter + 1;
-          false_positives = false_positives + 1;
-          has_succeded = false;
-          if break_at_failure == 1
-            imshow(image{1});
-            clc
-            disp('False Positive!');
-            disp(sprintf('Should be %i. \nWas %i. \nBelived to be %i', n, id, id_false));
-            disp(sprintf('Comparision value was %f with threshold %f.', min_value, threshold));
-            pause
-          end
+      if id == -1
+        fatal_errors = fatal_errors + 1;
+        fail_counter = fail_counter + 1;
+        if break_at_fatal == 1
+          imshow(image{1});
+          clc
+          disp('Fatal Error!');
+          pause
         end
       else
-        if id == n
-          success_counter = success_counter + 1;
-          has_succeded = true;
-        else
-          fail_counter = fail_counter + 1;
-          has_succeded = false;
-
-
-          if id == 0
-            false_negatives = false_negatives + 1;
-          else
-            failed_recognitions = failed_recognitions + 1;
+        if n == number_of_people
+          if lowest_no_access_comparison > min_value
+            lowest_no_access_comparison = min_value;
           end
-
-          if break_at_failure == 1
-            imshow(image{1});
-            clc
-            if id == 0
-              disp('False Negative!');
-            else
-              disp('Failed Recognition!');
+          if id == 0
+            success_counter = success_counter + 1;
+            has_succeded = true;
+          else
+            fail_counter = fail_counter + 1;
+            false_positives = false_positives + 1;
+            has_succeded = false;
+            if break_at_failure == 1
+              imshow(image{1});
+              clc
+              disp('False Positive!');
+              disp(sprintf('Should be %i. \nWas %i. \nBelived to be %i', n, id, id_false));
+              disp(sprintf('Comparision value was %f with threshold %f.', min_value, threshold));
+              pause
             end
-            disp(sprintf('Should be %i. \nWas %i. \nBelived to be %i', n, id, id_false));
-            disp(sprintf('Comparision value was %f with threshold %f.', min_value, threshold));
-            pause
+          end
+        else
+          if id == n
+            success_counter = success_counter + 1;
+            has_succeded = true;
+          else
+            fail_counter = fail_counter + 1;
+            has_succeded = false;
+
+
+            if id == 0
+              false_negatives = false_negatives + 1;
+            else
+              failed_recognitions = failed_recognitions + 1;
+            end
+
+            if break_at_failure == 1
+              imshow(image{1});
+              clc
+              if id == 0
+                disp('False Negative!');
+              else
+                disp('Failed Recognition!');
+              end
+              disp(sprintf('Should be %i. \nWas %i. \nBelived to be %i', n, id, id_false));
+              disp(sprintf('Comparision value was %f with threshold %f.', min_value, threshold));
+              pause
+            end
           end
         end
       end
@@ -118,6 +129,7 @@ function [] = stats(build_database, write_output, break_at_failure)
   disp(sprintf('Number of false positives: %i', false_positives));
   disp(sprintf('Number of false negatives: %i', false_negatives));
   disp(sprintf('Number of failed recognitions: %i', failed_recognitions));
+  disp(sprintf('Number of fatal errors: %i', fatal_errors));
   disp(sprintf('Lowest no access comparision: %f', lowest_no_access_comparison));
 
   fail_rate = fail_counter / (success_counter + fail_counter);
