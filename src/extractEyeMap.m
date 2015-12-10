@@ -1,7 +1,7 @@
 function finalEyeMap = extractEyeMap(faceMask, filteredEyeCandidates1, ...
                                      filteredEyeCandidates2, overSaturatedMask, ...
                                      estimatedSkinMask, filteredFaceMaskEyes, ...
-                                     averageFaceColorMask, grayImage, Y, Cb, Cr)
+                                     averageFaceColorMask, grayImage, Y, Cb, Cr, mouthMap)
     
     Y = uint16(Y);
     Cr = uint16(Cr);
@@ -45,6 +45,12 @@ function finalEyeMap = extractEyeMap(faceMask, filteredEyeCandidates1, ...
     finalEyeMap = finalEyeMap.*filteredFaceMaskEyes;
     finalEyeMap = finalEyeMap.*faceMask;
     finalEyeMap = finalEyeMap.*averageFaceColorMask;
+    
+    mouthMap2 = mouthMap > 0.5 * max(mouthMap(faceMask));
+    mouthMap2 = imdilate(mouthMap2, strel('disk', 7));
+    mouthMap2 = imfill(mouthMap2, 'holes');
+    mouthMap2 = ExtractNLargestBlobs(mouthMap2, 1);
+    finalEyeMap = finalEyeMap .* ~mouthMap2;
     
 %     figure; imshow(finalEyeMap); title('finalEyeMap'); pause;
 

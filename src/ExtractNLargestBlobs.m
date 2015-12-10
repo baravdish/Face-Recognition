@@ -1,5 +1,7 @@
 function binaryImage = ExtractNLargestBlobs(binaryImage, numberToExtract)
 try
+%     numberToExtract
+%     figure; imshow(binaryImage); pause;
 	% Get all the blob properties.  Can only pass in originalImage in version R2008a and later.
 	[labeledImage, numberOfBlobs] = bwlabel(binaryImage);
 	blobMeasurements = regionprops(labeledImage, 'area');
@@ -27,5 +29,5 @@ try
 catch ME
 	errorMessage = sprintf('Error in function ExtractNLargestBlobs().\n\nError Message:\n%s', ME.message);
 	fprintf(1, '%s\n', errorMessage);
-	uiwait(warndlg(errorMessage));
+% 	uiwait(warndlg(errorMessage));
 end

@@ -4,29 +4,32 @@ function [faceMask, face, ...
           filteredFaceMaskFilled] = extractFaceMask(rgbImage, ...
                                                     foregroundMask, ...
                                                     estimatedSkinMask, ...
-                                                    nonFaceMask)
-
+                                                    nonFaceMask, ...
+                                                    Y)
+    
     faceMask = foregroundMask & estimatedSkinMask & ~nonFaceMask;
 %     figure; imshow(faceMask); title('foregroundMask & estimatedSkinMask & ~nonFaceMask'); pause;
    
     faceMask = imfill(faceMask, 'holes');
     faceMask = ExtractNLargestBlobs(faceMask, 1);
+
     faceMask = imdilate(faceMask, strel('disk', 8));
     faceMask = imerode(faceMask, strel('disk', 10));
 %     figure; imshow(faceMask); title('fill largest dilate -> erotion (closing) faceMask'); pause; 
     
     faceMask = shrinkFaceMask(faceMask);
 %     figure; imshow(faceMask); title('shrink faceMask'); pause; 
-
     faceMaskRep = repmat(faceMask, [1,1,3]);
     face = rgbImage.*uint8(faceMaskRep);
-%     figure; imshow(face); title('face'); pause;
 
-    grayFace = imadjust(rgb2gray(face));
-%     figure; imshow(grayFace); title('imadjust grayFace'); pause;
+    grayFace = extractGrayFace(Y, face, rgbImage, faceMaskRep);
+
+%     figure; imshow(grayFace); title('grayFace'); pause;
     grayFace = im2bw(grayFace, 0.47);
 %     figure; imshow(grayFace); title('threshold grayFace'); pause;
-     
+    
+
+
     filteredFaceMask = imfilter(grayFace, fspecial('laplacian'));
 %     figure; imshow(filteredFaceMask); title('filteredFaceMask'); pause
     filteredEyeCandidates1 = filteredFaceMask;
@@ -71,7 +74,7 @@ function [faceMask, face, ...
     filteredFaceMaskEyesReal = and(filteredFaceMaskFilled, filteredEyeCandidates1);
     filteredFaceMaskEyesReal = and(filteredFaceMaskEyesReal, filteredEyeCandidates2);
 %     figure; imshow(filteredFaceMaskEyesReal); title('filteredFaceMaskEyesReal'); pause;
-    
+
     
     filteredFaceMask = imdilate(filteredFaceMask, strel('disk', 30));
 %     figure; imshow(filteredFaceMask); title('filteredFaceMask'); pause;
@@ -86,36 +89,10 @@ function [faceMask, face, ...
     filteredFaceMask = imdilate(filteredFaceMask, strel('disk',20));
 %     figure; imshow(filteredFaceMask); title('filteredFaceMask'); pause;
     
-    faceMask = and(filteredFaceMask, faceMask);
-    faceMaskRep = repmat(faceMask, [1,1,3]);
-    face = rgbImage.*uint8(faceMaskRep);
+%     faceMask = and(filteredFaceMask, faceMask);
+%     faceMaskRep = repmat(faceMask, [1,1,3]);
+%     face = rgbImage2.*uint8(faceMaskRep);
 %     figure; imshow(face); title('face'); pause;
 end
 
 
-function faceMask = shrinkFaceMask(faceMask) 
-    faceMaskCopy = faceMask;
-    minCol = [];
-    maxCol = [];
-    minRow = [];
-    maxRow = [];
-    eraseRadius = 80; % 80
-    while( isempty(minCol) || isempty(maxCol) || ... 
-           isempty(minRow) || isempty(maxRow) )
-        faceMaskCopy = faceMask;
-        minCol = [];
-        maxCol = [];
-        minRow = [];
-        maxRow = [];
-        faceMaskCopy = imerode(faceMaskCopy, strel('disk', eraseRadius));
-        faceMaskCopy = imdilate(faceMaskCopy, strel('disk', eraseRadius));
-        [row, col] = find(faceMaskCopy(:,:,1) ~= 0);
-        minCol = min(col);
-        maxCol = max(col);
-        minRow = min(row);
-        maxRow = max(row);
-        eraseRadius = max(eraseRadius - 10, 1);
-%         imshow(faceMaskCopy); title('faceMaskCopy'); pause;
-    end
-    faceMask = faceMaskCopy;
-end

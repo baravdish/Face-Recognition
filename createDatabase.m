@@ -10,7 +10,8 @@ function [] = createDatabase(height, width, kernel_size, decorr, freqestim)
 
     face_image = rgb2gray(face_image);
     face_image = imresize(face_image, [height, width]);
-    database(i, :) = lpq(face_image, kernel_size, decorr, freqestim);
+    % database(i, :) = lpq(face_image, kernel_size, decorr, freqestim);
+    database(i, :) = describe(face_image, kernel_size);
   end
 
   save src/database.mat database

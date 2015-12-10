@@ -11,8 +11,8 @@ function [id, id_false, min_value] = testImage(img, database, size_of_database, 
   % img = histeq(img);
   % img = LogAbout(img);
 
-  histogram = lpq(img, kernel_size, decorr, freqestim);
-
+  % histogram = lpq(img, kernel_size, decorr, freqestim);
+  histogram = describe(img, kernel_size);
   hist_comp = zeros(size_of_database, 1);
   small_comp = zeros(size_of_database, 1);
 
