@@ -41,24 +41,29 @@ function grayFace = extractGrayFace(Y, face, rgbImage, faceMaskRep)
         
 %     figure; imshow(bright); title('bright'); pause;
 %     figure; imshow(dark); title('dark'); pause;
+
        
     redCont = uint8(zeros(size(dark(:,:,1))));
     redCont(dRmask) = 0.8 * redDiff;
     
     greenCont = uint8(zeros(size(dark(:,:,2))));
-    greenCont(dGmask) = 0.8 * greenDiff;
+    greenCont(dGmask) =  0.8 * greenDiff;
     
     blueCont = uint8(zeros(size(dark(:,:,3))));
     blueCont(dBmask) = 0.8 *  blueDiff;
       
-    dark2 = cat( 3, ( bright(:,:,1) + dark(:,:,1) + redCont ) , ...
-                      bright(:,:,2) + dark(:,:,2) + greenCont, ...
-                      bright(:,:,2) + dark(:,:,3) + blueCont);
+    dark2 = cat( 3, bright(:,:,1) + dark(:,:,1) + redCont , ...
+                    bright(:,:,2) + dark(:,:,2) + greenCont, ...
+                    bright(:,:,2) + dark(:,:,3) + blueCont);
             
     if twoFace
         grayFace = rgb2gray(dark2);
+%          figure; imshow(grayFace); title('grayFace special'); pause;
     else
+%         grayFace = rgb2gray(face);
+%         figure; imshow(grayFace); title('grayFace normal'); pause;
         grayFace = imadjust(rgb2gray(face));
+%         figure; imshow(grayFace); title('adjustet grayFace normal'); pause;
     end
     
 end

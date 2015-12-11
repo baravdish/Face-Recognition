@@ -9,7 +9,7 @@ function nonFaceMask = extractNonFaceMask(Cb, Cr, hsvImage)
     nonSkinMask2 = V < S - 0.2;
 %     figure; imshow(nonSkinMask2); title('nonSkinMask2'); pause;
     
-    nonFaceMask =  or(nonSkinMask1, nonSkinMask2);
+    nonFaceMask = or(nonSkinMask1, nonSkinMask2);
     nonFaceMask = imerode(nonFaceMask, strel('disk', 5));
     nonFaceMask = bwareaopen(nonFaceMask, 1000);
     nonFaceMask = imdilate(nonFaceMask, strel('disk', 5));
