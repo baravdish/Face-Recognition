@@ -49,6 +49,12 @@ im = hard_images{6};
 % imshow(im)
 % im = tests_images{7};
 
+% im = imread('img/tests/18/url.jpeg');
+% balanced_image = colorCorrection(im);
+% face_image = detectFace(balanced_image, im);
+
+
+% result = face_image;
 result = tnm034(im)
 
 disp 'hello'
