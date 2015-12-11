@@ -55,7 +55,7 @@ im = hard_images{6};
 
 
 % result = face_image;
-result = tnm034(im)
+% result = tnm034(im)
 
 disp 'hello'
 return;
