@@ -1,24 +1,23 @@
-function finalEyeMap = extractEyeMap(faceMask, filteredFaceMaskCopy, ...
-                                     filteredFaceMaskCopy2, overSaturatedMask, ...
+function finalEyeMap = extractEyeMap(faceMask, filteredEyeCandidates1, ...
+                                     filteredEyeCandidates2, overSaturatedMask, ...
                                      estimatedSkinMask, filteredFaceMaskEyes, ...
-                                     averageFaceColorMask, grayImage, Y, Cb, Cr)
+                                     averageFaceColorMask, grayImage, Y, Cb, Cr, mouthMap)
     
     Y = uint16(Y);
     Cr = uint16(Cr);
     Cb = uint16(Cb);
     
     eyeMapChroma = extractEyeMapChroma(Cb, Cr);
-    
+
     eyeMapLuma = extractEyeMapLuma(grayImage, Y);
-    
+
     eyeMap = eyeMapChroma .* eyeMapLuma;
-    
     eyeMap = normalizeEyeMap(eyeMap);
              
     originalEyeMap = eyeMap;
     
-    eyeMap = eyeMap.*filteredFaceMaskCopy;
-    eyeMap = eyeMap.*filteredFaceMaskCopy2;
+    eyeMap = eyeMap.*filteredEyeCandidates1;
+    eyeMap = eyeMap.*filteredEyeCandidates2;
     eyeMap = eyeMap.*im2double(faceMask);
     eyeMap = eyeMap.*~overSaturatedMask;
     
@@ -34,12 +33,18 @@ function finalEyeMap = extractEyeMap(faceMask, filteredFaceMaskCopy, ...
     eyeMap = imdilate(eyeMap, strel('disk', 10));
 
     finalEyeMap = originalEyeMap;
+
     finalEyeMap = finalEyeMap.*eyeMap;
     finalEyeMap = finalEyeMap.*filteredFaceMaskEyes;
     finalEyeMap = finalEyeMap.*faceMask;
     finalEyeMap = finalEyeMap.*averageFaceColorMask;
     
-%     figure; imshow(finalEyeMap); title('finalEyeMap'); pause;
+    tentativeMouthMap = mouthMap > 0.5 * max(mouthMap(faceMask));
+    tentativeMouthMap = imdilate(tentativeMouthMap, strel('disk', 7));
+    tentativeMouthMap = imfill(tentativeMouthMap, 'holes');
+    tentativeMouthMap = extractNLargestBlobs(tentativeMouthMap, 1);
+    
+    finalEyeMap = finalEyeMap .* ~tentativeMouthMap;
 
 end
 
@@ -66,7 +71,6 @@ function eyeMapLuma = extractEyeMapLuma(grayImage, Y)
         dilation = imdilate(Y, kernel);
         erosion = imerode(Y, kernel);
         eyeMapLuma = eyeMapLuma + (dilation./(n + erosion));
-%         figure; imshow(eyeMapLuma); title('eyeMapLuma'); pause;
     end
     eyeMapLuma = im2double(eyeMapLuma);
 end

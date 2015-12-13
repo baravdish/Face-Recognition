@@ -1,5 +1,5 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%
-% im: Image of unknown face, RGB-image in uint8 format in the
+% input: Image of unknown face, RGB-image in uint8 format in the
 % range [0,255]
 %
 % id: The identity number (integer) of the identified person,
@@ -9,7 +9,7 @@
 
 function id = tnm034(im)
   try
-    balanced_image = colorCorrection(im);
+    balanced_image = colorCorrection(input);
     face_image = detectFace(balanced_image);
     
     id = verify(face_image);

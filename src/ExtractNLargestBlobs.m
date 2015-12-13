@@ -1,5 +1,7 @@
-function binaryImage = ExtractNLargestBlobs(binaryImage, numberToExtract)
+function binaryImage = extractNLargestBlobs(binaryImage, numberToExtract)
 try
+%     numberToExtract
+%     figure; imshow(binaryImage); pause;
 	% Get all the blob properties.  Can only pass in originalImage in version R2008a and later.
 	[labeledImage, numberOfBlobs] = bwlabel(binaryImage);
 	blobMeasurements = regionprops(labeledImage, 'area');

@@ -9,7 +9,9 @@ function setupOnce(testCase)  % do not change function name
   [no_access_images, number_of_no_access_images] = readAllFromDir('no_access', 'img/no_access/', '*.jpg');
   [hard_images, number_of_hard_images] = readAllFromDir('hard', 'img/hard/', '*.jpg');
   [all_images, number_of_all_images] = readAllFromDir('all', 'img/all/', '*.jpg');
-
+  [tests_images, number_of_tests] = readAllFromDir('tests', 'img/tests/17/', '*.jpg');
+  [tests2_images, number_of_tests2] = readAllFromDir('tests2', 'img/tests/18/', '*.jpg');
+   
   testCase.TestData.access_images = access_images;
   testCase.TestData.number_of_access_images = number_of_access_images;
   testCase.TestData.no_access_images = no_access_images;
@@ -18,6 +20,13 @@ function setupOnce(testCase)  % do not change function name
   testCase.TestData.number_of_hard_images = number_of_hard_images;
   testCase.TestData.all_images = all_images;
   testCase.TestData.number_of_all_images = number_of_all_images;
+  
+  testCase.TestData.tests_images = tests_images;
+  testCase.TestData.number_of_tests = number_of_tests;
+
+  testCase.TestData.tests2_images = tests2_images;
+  testCase.TestData.number_of_tests2 = number_of_tests2;
+  rng(0,'twister');
 end
 
 function teardownOnce(testCase)  % do not change function name
@@ -37,10 +46,10 @@ function testReadHardImages(testCase)
 end
 
 function testAllAccessImages(testCase)
-access_images = testCase.TestData.access_images;
-number_of_access_images = testCase.TestData.number_of_access_images;
-access_images = testCase.TestData.hard_images;
-number_of_access_images = testCase.TestData.number_of_hard_images;
+% access_images = testCase.TestData.access_images;
+% number_of_access_images = testCase.TestData.number_of_access_images;
+% access_images = testCase.TestData.hard_images;
+% number_of_access_images = testCase.TestData.number_of_hard_images;
 % access_images = testCase.TestData.no_access_images;
 % number_of_access_images = testCase.TestData.number_of_no_access_images;
 access_images = testCase.TestData.all_images;
@@ -48,6 +57,6 @@ number_of_access_images = testCase.TestData.number_of_all_images;
 
   for k = 1 : number_of_access_images
     id = tnm034(access_images{k});
-    verifyEqual(testCase, id, k);
+%     verifyEqual(testCase, id, k);
   end
 end

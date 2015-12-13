@@ -3,6 +3,7 @@ function id = testImage(img, database, size_of_database)
   img = imresize(img, [200, 200]);
   
   histogram = describe(img, 21);
+  
   hist_comp = zeros(size_of_database, 1);
   small_comp = zeros(size_of_database, 1);
 
