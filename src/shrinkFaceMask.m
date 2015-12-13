@@ -5,8 +5,9 @@ function faceMask = shrinkFaceMask(faceMask)
     minRow = [];
     maxRow = [];
     eraseRadius = 80;
-    while( isempty(minCol) || isempty(maxCol) || ... 
-           isempty(minRow) || isempty(maxRow) )
+    maxIterations = 100;
+    while( (isempty(minCol) || isempty(maxCol) || ... 
+           isempty(minRow) || isempty(maxRow)) && maxIterations > 0)
         faceMaskCopy = faceMask;
         minCol = [];
         maxCol = [];
@@ -20,6 +21,7 @@ function faceMask = shrinkFaceMask(faceMask)
         minRow = min(row);
         maxRow = max(row);
         eraseRadius = max(eraseRadius - 10, 1);
+        maxIterations = maxIterations - 1;
     end
     faceMask = faceMaskCopy;
 end

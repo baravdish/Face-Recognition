@@ -7,7 +7,7 @@
 % and ‘0’ for all other faces.
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function id = tnm034(im)
+function id = tnm034(input)
   try
     balanced_image = colorCorrection(input);
     face_image = detectFace(balanced_image);
