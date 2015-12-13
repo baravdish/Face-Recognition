@@ -49,34 +49,18 @@ face_image = detectFace(balanced_image);
 % imshow(im)
 % im = tests_images{7};
 
-% im = imread('img/tests/18/url.jpeg');
-% balanced_image = colorCorrection(im);
-% face_image = detectFace(balanced_image, im);
-
-
-% result = face_image;
 % result = tnm034(im)
 
-disp 'hello'
 return;
 
 %%
-% for i = 6:6
+% for i = 1:1
 for i = 1:length(access_images)
-    randNumber = randi([0 5]);
+   
     img = access_images{i};
-    imgRot = imrotate(img, randNumber, 'crop');
-    
-    imgScale = imresize(img, 1.1);
-    imgHSV = rgb2hsv(img);
-    imgHSV(:,:,3) = imgHSV(:,:,3)*0.7;
-    imgTone = hsv2rgb(imgHSV);
-    imgTone = uint8(255*imgTone);
-%     figure
-%     imshow(imgTone);
 
     try
-        result = tnm034(imgTone);
+        result = tnm034(img)
     catch
         warning('Program failed.');
         result = 0;
