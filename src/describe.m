@@ -1,3 +1,6 @@
+%Inspired by the work of Janne Heikkil, Esa Rahtu, and Ville Ojansivu.
+%http://www.cse.oulu.fi/CMV/Downloads/LPQMatlab
+
 function descriptor = describe(img, kernel_size)
   img = double(img);
   radius = (kernel_size - 1) / 2;

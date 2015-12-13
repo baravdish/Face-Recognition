@@ -1,4 +1,4 @@
-function [] = createDatabase(height, width, kernel_size, decorr, freqestim)
+function [] = createDatabase()
   [access_images, number_of_access_images] = readAllFromDir('access', 'img/access/', '*.jpg');
 
   database = zeros(number_of_access_images, 256);
@@ -9,9 +9,8 @@ function [] = createDatabase(height, width, kernel_size, decorr, freqestim)
     face_image = detectFace(balanced_image);
 
     face_image = rgb2gray(face_image);
-    face_image = imresize(face_image, [height, width]);
-    % database(i, :) = lpq(face_image, kernel_size, decorr, freqestim);
-    database(i, :) = describe(face_image, kernel_size);
+    face_image = imresize(face_image, [200, 200]);
+    database(i, :) = describe(face_image, 21);
   end
 
   save src/database.mat database

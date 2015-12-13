@@ -20,7 +20,8 @@ function [] = stats(build_database, write_output, break_at_failure, break_at_fat
   kernel_size = 21; % Requires that the database is rebuilt!
   decorr = 0; % Requires that the database is rebuilt!
   freqestim = 1; % Requires that the database is rebuilt!
-
+  blur = 0.5;
+  
   if build_database == 1
     createDatabase(height, width, kernel_size, decorr, freqestim);
   end
@@ -33,12 +34,16 @@ function [] = stats(build_database, write_output, break_at_failure, break_at_fat
     image_collection.number_of_images{n} = number_of_images;
     total_number_of_images = total_number_of_images + number_of_images;
   end
-
+  
+  for test_number = 1.0 : 0.1 :  1.9
+    blur = test_number;
+    
   progress = '';
   for n = 1 : total_number_of_images
     progress = strcat(progress, '-');
   end
-
+  
+ 
   images_computed = 0;
   for n = 1 : number_of_people
     images = image_collection.images{n};
@@ -46,10 +51,12 @@ function [] = stats(build_database, write_output, break_at_failure, break_at_fat
 
     for k = 1 : number_of_images
       image = images(k);
+     
+      %image{1} = imgaussfilt(image{1}, 0.5);
       % imshow(image{1})
       has_succeded = false;
       tic
-      [id, id_false, min_value] = tnm034(image{1}, height, width, threshold, kernel_size, decorr, freqestim);
+      [id, id_false, min_value] = tnm034(image{1}, height, width, threshold, kernel_size, decorr, freqestim, blur);
       time(n, k) = toc;
       if id == -1
         fatal_errors = fatal_errors + 1;
@@ -134,8 +141,10 @@ function [] = stats(build_database, write_output, break_at_failure, break_at_fat
 
   fail_rate = fail_counter / (success_counter + fail_counter);
   success_rate = success_counter / (success_counter + fail_counter);
-
+  success_rate_no_fatal = success_counter / (success_counter + fail_counter - fatal_errors);
+  
   disp(sprintf('Success rate: %i%%', round(success_rate * 100)));
+  disp(sprintf('Success rate (no fatals): %i%%', round(success_rate_no_fatal * 100)));
   disp(sprintf('Fail rate: %i%%', round(fail_rate * 100)));
 
   average_time = 0;
@@ -170,6 +179,7 @@ function [] = stats(build_database, write_output, break_at_failure, break_at_fat
                   'Kernel size: %i\n' ...
                   'Decorrelation: %i\n' ...
                   'Local frequency estimation: %i\n' ...
+                  'Blur: %f\n' ...
                   '==========Results==========\n' ...
                   'Number of images: %i\n' ...
                   'Number of successes: %i\n' ...
@@ -177,15 +187,18 @@ function [] = stats(build_database, write_output, break_at_failure, break_at_fat
                   'Number of false positives: %i\n' ...
                   'Number of false negatives: %i\n' ...
                   'Number of failed recognitions: %i\n' ...
+                  'Number of fatal errors: %i\n' ...
                   'Lowest no access comparision: %f\n' ...
                   'Success rate: %i%%\n' ...
+                  'Success rate (no fatals): %i%%\n' ...
                   'Fail rate: %i%%\n' ...
                   'Total time: %0.2fs\n' ...
                   'Average time: %0.2fs\n' ...
                   'Longest time: %0.2fs\n' ...
                   'Shortest time: %0.2fs\n' ...
                   '==============================\n\n'];
-    fid = fopen('stats.txt', 'a');
-    fprintf(fid, format_spec, height, width, threshold, kernel_size, decorr, freqestim, total_number_of_images, success_counter, fail_counter, false_positives, false_negatives, failed_recognitions, lowest_no_access_comparison, round(success_rate * 100), round(fail_rate * 100), total_time, average_time, longest_time, shortest_time);
+    fid = fopen('tone_test_upper.txt', 'a');
+    fprintf(fid, format_spec, height, width, threshold, kernel_size, decorr, freqestim, blur, total_number_of_images, success_counter, fail_counter, false_positives, false_negatives, failed_recognitions, fatal_errors, lowest_no_access_comparison, round(success_rate * 100), round(success_rate_no_fatal * 100), round(fail_rate * 100), total_time, average_time, longest_time, shortest_time);
+  end
   end
 end
