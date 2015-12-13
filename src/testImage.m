@@ -1,18 +1,9 @@
-function [id, id_false, min_value] = testImage(img, database, size_of_database, height, width, threshold, kernel_size, decorr, freqestim)
-  % img = equalize(img);
+function id = testImage(img, database, size_of_database)
   img = rgb2gray(img);
-%   img = imgradient(img);
-%   img = imadjust(img);
-%   img = imsharpen(img);
-% img = histeq(img);
-
-
-  img = imresize(img, [height, width]);
-  % img = histeq(img);
-  % img = LogAbout(img);
-
-  % histogram = lpq(img, kernel_size, decorr, freqestim);
-  histogram = describe(img, kernel_size);
+  img = imresize(img, [200, 200]);
+  
+  histogram = describe(img, 21);
+  
   hist_comp = zeros(size_of_database, 1);
   small_comp = zeros(size_of_database, 1);
 
@@ -27,13 +18,11 @@ function [id, id_false, min_value] = testImage(img, database, size_of_database, 
 
   [value index] = min(hist_comp);
 
-  id_false = index;
-
+  threshold = 0.001140;
   if(value < threshold)
     id = index;
   else
     id = 0;
   end
-  min_value = value;
 
 end
