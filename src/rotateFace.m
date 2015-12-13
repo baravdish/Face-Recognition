@@ -1,17 +1,11 @@
 function [leftEyeCenterX, leftEyeCenterY, ...
           rightEyeCenterX, rightEyeCenterY, ...
-          rgbImage, face, faceMask, mouthMap] = rotateFace(leftEyeCenterX, leftEyeCenterY, ...
-                                       rightEyeCenterX, rightEyeCenterY, ...
-                                       rgbImage, face, faceMask, ...
-                                       leftRadius, rightRadius, ...
-                                       mouthMap)
-% 
-%     figure; imshow(face); title('face before rotated'); 
-%     viscircles([leftEyeCenterX, leftEyeCenterY], leftRadius,'EdgeColor','r');
-%     viscircles([rightEyeCenterX, rightEyeCenterY], rightRadius,'EdgeColor', 'g');
-%     pause;
-%      
+          rgbImage, face, mouthMap] = rotateFace(leftEyeCenterX, leftEyeCenterY, ...
+                                                 rightEyeCenterX, rightEyeCenterY, ...
+                                                 rgbImage, face, mouthMap)
+
     referenceDirection = [0 1];
+    
     eyeDirection = [leftEyeCenterX-rightEyeCenterX, leftEyeCenterY-rightEyeCenterY];
     eyeDirection = eyeDirection / norm(eyeDirection);
     
@@ -23,7 +17,6 @@ function [leftEyeCenterX, leftEyeCenterY, ...
     
     rgbImage = imrotate(rgbImage, -angle);
     face = imrotate(face, -angle);
-    faceMask = imrotate(faceMask, -angle);
     mouthMap = imrotate(mouthMap, -angle);
     
     marker(round(leftEyeCenterY), round(leftEyeCenterX)) = 1;
@@ -38,10 +31,5 @@ function [leftEyeCenterX, leftEyeCenterY, ...
     [rightEyeCenterY, rightEyeCenterX]=find(marker_rot > 0);
     rightEyeCenterY = rightEyeCenterY(1);
     rightEyeCenterX = rightEyeCenterX(1);
-    
-%     figure; imshow(face); title('face after rotated'); pause;
-%     viscircles([leftEyeCenterX, leftEyeCenterY], leftRadius,'EdgeColor','r');
-%     viscircles([rightEyeCenterX, rightEyeCenterY], rightRadius,'EdgeColor', 'g');
-%     pause;
 
 end

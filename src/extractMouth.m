@@ -1,8 +1,5 @@
 function [mouthX, mouthY] = extractMouth(mouthMap, nonMouthMask)
 
-%     figure; imshow(mouthMap); title('mouthMap'); pause;
-%     figure; imshow(~nonMouthMask); pause; %title('~nonMouthMask'); pause;
-    
     mouthMap = mouthMap > 0.5 * max(mouthMap(~nonMouthMask));
 
     mouthMap = imdilate(mouthMap, strel('disk', 4));
@@ -10,14 +7,7 @@ function [mouthX, mouthY] = extractMouth(mouthMap, nonMouthMask)
     mouthMap = imerode(mouthMap, strel('disk', 4));
     
     mouthMask = and(mouthMap, ~nonMouthMask);
-    
-    try
-    mouthMask = ExtractNLargestBlobs(mouthMask, 1);
-    catch
-        warning('extractMouthMap.m failed. At ExtractNLargestBlobs.');
-        mouthMask = -1;
-        return;
-    end
+    mouthMask = extractNLargestBlobs(mouthMask, 1);
     
     mouthBlobs = regionprops(mouthMask, mouthMap, {'Centroid'});
 

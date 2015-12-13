@@ -14,8 +14,7 @@ function [leftEyeCenterX, leftEyeCenterY, leftEyeRadius, ...
     centerX1 = centersBright(1,1,1);
     centerY1 = centersBright(1,2,1);
     radius1 = radiiBright(1,1);
-%     irisMask = ((rows - centerY1).^2 + (cols - centerX1).^2) <= radius1.^2;
-    
+
     centerX2 = centersBright(2,1,1);
     centerY2 = centersBright(2,2,1);
     radius2 = radiiBright(2,1);
@@ -33,11 +32,6 @@ function [leftEyeCenterX, leftEyeCenterY, leftEyeRadius, ...
         end
     end
          
-%     irisMask = irisMask | ((rows - centerY2).^2 + (cols - centerX2).^2) <= radius2.^2;
-%     irisMaskRep = repmat(irisMask, [1,1,3]);
-%     irisMap = face.*uint8(irisMaskRep);
-%     figure; imshow(irisMap); title('irisMap'); pause;
-    
     leftEyeCenterX = centerX1;
     leftEyeCenterY = centerY1;
     leftEyeRadius = radius1;
@@ -45,6 +39,7 @@ function [leftEyeCenterX, leftEyeCenterY, leftEyeRadius, ...
     rightEyeCenterX = centerX2;
     rightEyeCenterY = centerY2;
     rightEyeRadius = radius2;
+    
     if centerX1 > centerX2 
         leftEyeCenterX = centerX2;
         leftEyeCenterY = centerY2;

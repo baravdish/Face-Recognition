@@ -26,9 +26,9 @@ rng(0,'twister');
 % balanced_image = colorCorrection(im);
 % face_image = detectFace(balanced_image, im);
 % 
-% im = imread('img/tests/17/pittchanel_01.jpg');
-% balanced_image = colorCorrection(im);
-% face_image = detectFace(balanced_image, im);
+im = imread('img/tests/17/pittchanel_01.jpg');
+balanced_image = colorCorrection(im);
+face_image = detectFace(balanced_image);
 % 
 % im = imread('img/tests/17/zach-leatherman.jpg');
 % balanced_image = colorCorrection(im);

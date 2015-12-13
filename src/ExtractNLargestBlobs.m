@@ -1,4 +1,4 @@
-function binaryImage = ExtractNLargestBlobs(binaryImage, numberToExtract)
+function binaryImage = extractNLargestBlobs(binaryImage, numberToExtract)
 try
 %     numberToExtract
 %     figure; imshow(binaryImage); pause;
