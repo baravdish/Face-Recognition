@@ -20,7 +20,7 @@ tic
 result = repmat(struct('blurFace', 1 , 'blurResult', 1,...
                         'toneFace', 1, 'toneResult', 1, 'scaleFace', 1, ...
                         'scaleResult', 1, 'rotationFace', 1, 'rotationResult', ...
-                        1, 'sigma', 1, 'light', 1, 'scale', 1, 'rotation', 1), nAccImages, 1 );
+                        1, 'sigma', 1, 'light', 1, 'scale', 1, 'rotation', 1), nTestImages, 1 );
 
 height = 200; % Requires that the database is rebuilt!
 width = 200; % Requires that the database is rebuilt!
@@ -31,29 +31,29 @@ for i = 1:length(result)
     
     % TODO: Borde ta in alla bilder inte bara access, bunta ihop alla eller
     % en till loop?
-    img = access_images{i};
+%     img = access_images{i};
 %     img = no_access_images{i};
 %     img = hard_images{i};
-%     img = tests_images{i};
+    img = tests_images{i};
     
-    result(i).sigma = 0.5;
-    result(i).light = 0.7;
-    result(i).scale = 0.9;
-    result(i).rotation = 10;
+    result(i).sigma = 1.0;
+    result(i).light = 1.3;
+    result(i).scale = 1.1;
+    result(i).rotation = 20;
 
-    imgBlur = applyLP(img, result(i).sigma);
-    imgBlur = colorCorrection(imgBlur);
-    result(i).blurFace = detectFace(imgBlur);
+%     imgBlur = applyLP(img, result(i).sigma);
+%     imgBlur = colorCorrection(imgBlur);
+%     result(i).blurFace = detectFace(imgBlur);
 %     result(i).blurResult = verify(result(i).blurFace, height, width, threshold, kernel_size, 0, 0);
 % 
-    imgTone = applyTone(img, result(i).light);
-    imgTone = colorCorrection(imgTone);
-    result(i).toneFace = detectFace(imgTone);
+%     imgTone = applyTone(img, result(i).light);
+%     imgTone = colorCorrection(imgTone);
+%     result(i).toneFace = detectFace(imgTone);
 %     result(i).toneResult = verify(result(i).toneFace, height, width, threshold, kernel_size, 0, 0);
 
-    imgScale = imresize(img, result(i).scale);
-    imgScale = colorCorrection(imgScale);
-    result(i).scaleFace = detectFace(imgScale);
+%     imgScale = imresize(img, result(i).scale);
+%     imgScale = colorCorrection(imgScale);
+%     result(i).scaleFace = detectFace(imgScale);
 %     result(i).scaleResult = verify(result(i).scaleFace, height, width, threshold, kernel_size, 0, 0);
 
     imgRot = imrotate(img, result(i).rotation, 'crop');

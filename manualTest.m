@@ -1,17 +1,38 @@
 clear
 clc
 
-load resultAccess.mat
-% load resultNoAcc.mat
-% load resultHard.mat
-% load resultTest.mat
+% load resultAccess.mat
+% load resultAccess2.mat
+% load resultAccess3.mat
+% load resultAccessLight.mat
+% load resultAccessLight2.mat
 
+% load resultNoAcc.mat
+% load resultNoAcc2.mat
+% load resultNoAcc3.mat
+% load resultNoAccLight.mat
+% load resultNoAccLight2.mat
+
+% load resultHard.mat
+% load resultHard2.mat
+% load resultHard3.mat
+% load resultHardLight.mat
+% load resultHardLight2.mat
+
+% load resultTest.mat
+% load resultTest2.mat
+% load resultTest3.mat
+% load resultTestLight.mat
+% load resultTestLight2.mat
+% load resultTestRot.mat
+load resultTestRot2.mat
+result(1)
 %% Evaluation
 % Blur
 close all
 
 for i = 1:length(result)
-   
+
     figure; 
     imshow(result(i).blurFace); 
     title(strcat('blurFace, with sigma = ', num2str(result(i).sigma)));

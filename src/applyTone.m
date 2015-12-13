@@ -1,20 +1,14 @@
 function output = applyTone(img, lightPercentage)
-
-imgHSV = rgb2hsv(img);
     
 if nargin > 1
-    V = imgHSV(:,:,3)*lightPercentage;
-    
+    imgLight = img*lightPercentage;
     if lightPercentage > 1
-        bin = V > 1;
-        V(bin) = 1;
-    end
-      
-    imgHSV(:,:,3) = V;
+        index = imgLight > 255;
+        imgLight(index) = 255;
+    end    
 else
-    randNumber = randi([0.8 1]);
-    imgHSV(:,:,3) = imgHSV(:,:,3)*randNumber;
+    randNumber = randi([0.7 1]);
+    imgLight = img*randNumber;
 end
 
-imgTone = hsv2rgb(imgHSV);
-output = uint8(255*imgTone);
+output = imgLight;
