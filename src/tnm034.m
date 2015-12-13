@@ -14,6 +14,6 @@ function id = tnm034(input)
     
     id = verify(face_image);
   catch exception
-    id = -1;
+    id = 0;
   end
 end
