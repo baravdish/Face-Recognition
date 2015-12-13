@@ -1,5 +1,5 @@
-function binaryImage = meanColorize(rgbImage, mask, tolerance)
-
+function meanColorMask = meanColorize(rgbImage, mask, tolerance)
+    
     ycbcrImage = rgb2ycbcr(im2double(rgbImage));
 
     Y = ycbcrImage(:, :, 1); 
@@ -17,15 +17,11 @@ function binaryImage = meanColorize(rgbImage, mask, tolerance)
     deltaCb = Cb - Cbmean * ones(rows, columns);
     deltaCr = Cr - Crmean * ones(rows, columns);
     
-    % This is an image that represents the color difference.
-    deltaE = sqrt(deltaY.^2 + deltaCb.^2 + deltaCr.^2);
+    delta = sqrt(deltaY.^2 + deltaCb.^2 + deltaCr.^2);
 
-    % Get the mean delta E in the mask region
-    meanMaskedDeltaE = mean(deltaE(mask));
+    meanMaskedDeltaE = mean(delta(mask));
     
-    binaryImage = (deltaE >= meanMaskedDeltaE - tolerance) & ...
-                  (deltaE <= meanMaskedDeltaE + tolerance);
-   
-%     figure; imshow(binaryImage); title('meanColorize binaryImage'); 
+    meanColorMask = (delta >= meanMaskedDeltaE - tolerance) & ...
+                    (delta <= meanMaskedDeltaE + tolerance);
     
 end
