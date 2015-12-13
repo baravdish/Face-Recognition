@@ -1,9 +1,3 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%
-% input: RGB-Image to correct.
-
-% output: Corrected image.
-%%%%%%%%%%%%%%%%%%%%%%%%%
-
 function [output] = colorCorrection(img)
     
     R = img(:,:,1);
@@ -36,11 +30,6 @@ function [output] = colorCorrection(img)
     R = R - (ceil(darkMean(1,1))*uint8(ones(rows, columns)));
     G = G - (ceil(darkMean(1,2))*uint8(ones(rows, columns)));
     B = B - (ceil(darkMean(1,3))*uint8(ones(rows, columns)));
-     
-    % figure; imshow(img); title('before'); pause;   
-    % output = cat(3, R, G, B);
-    % imshow(output); title('after'); pause;   
-    % return;
 
     scaleFactors = 255./brighMean;
     
@@ -56,8 +45,5 @@ function [output] = colorCorrection(img)
     binB = bNorm > 255;
     bNorm(binB) = 255;
     output = cat(3, rNorm, gNorm, bNorm);
-
-    % figure; imshow(originalImg); title('original'); pause;
-    % figure; imshow(output); title('WhiteBalanced'); pause;
 
 end

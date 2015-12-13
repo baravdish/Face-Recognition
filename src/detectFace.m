@@ -85,6 +85,6 @@ function output = detectFace(rgbImage)
         output = rgbImage(min(row):max(row), min(col):max(col), :);
     end
     
-    figure; imshow(output); title('output'); 
+%     figure; imshow(output); title('output'); 
     
 end
