@@ -62,7 +62,7 @@ for i = 1:length(access_images)
     img = access_images{i};
     
     try
-        result = tnm034(img)
+        result(i) = tnm034(img)
     catch
         warning('Program failed.');
         result = 0;
@@ -88,9 +88,7 @@ end
 
 %% 
 for i = 1:length(random_images)
-    figure;
-    imshow(random_images{i});
-    title('Inpu');
+    
     result = tnm034(random_images{i})
     
 end
